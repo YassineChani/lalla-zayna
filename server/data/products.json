@@ -1,0 +1,494 @@
+[
+  {
+    "id": "lz-01",
+    "slug": "le-zayna-royal",
+    "price": 480,
+    "rating": 4.9,
+    "reviewsCount": 48,
+    "isBestseller": true,
+    "isNew": false,
+    "category": "handbag",
+    "images": [
+      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80"
+    ],
+    "colors": [
+      { "name": "Noir Ébène", "hex": "#1a1a1a" },
+      { "name": "Cognac Royal", "hex": "#8c4e28" },
+      { "name": "Vert Émeraude", "hex": "#1b4332" }
+    ],
+    "translations": {
+      "fr": {
+        "name": "Le Zayna Royal",
+        "subtitle": "Sac à main signature en cuir pleine fleur",
+        "categoryName": "Sacs à Main",
+        "description": "Pièce emblématique de la Maison Lala Zayna, Le Zayna Royal allie la pureté des lignes contemporaines à la noblesse du travail artisanal du cuir. Doté d'un fermoir sculptural doré à l'or fin 24 carats inspiré de l'architecture mauresque.",
+        "details": [
+          "Cuir de veau pleine fleur au tannage végétal",
+          "Finition fermoir doré à l'or fin 24k",
+          "Doublure intérieure en satin de soie champagne",
+          "Poche zippée et double compartiment smartphone",
+          "Bandoulière en cuir amovible et ajustable (longueur 105 - 120 cm)"
+        ],
+        "leatherType": "Cuir de veau pleine fleur d'exception",
+        "dimensions": "28 x 21 x 11 cm"
+      },
+      "en": {
+        "name": "The Zayna Royal",
+        "subtitle": "Signature full-grain leather handbag",
+        "categoryName": "Handbags",
+        "description": "The flagship creation of Maison Lala Zayna, The Zayna Royal pairs contemporary minimalism with royal artisan leatherwork. Featuring a sculptural 24k gold-plated clasp inspired by Moorish palace arches.",
+        "details": [
+          "Vegetable-tanned full-grain calfskin leather",
+          "24k gold-finish bespoke sculptural hardware",
+          "Champagne silk-satin inner lining",
+          "Zipped interior divider & dual smartphone slip pockets",
+          "Detachable & adjustable leather crossbody strap (105 - 120 cm)"
+        ],
+        "leatherType": "Ultra-grade full-grain calfskin",
+        "dimensions": "28 x 21 x 11 cm (11 x 8.3 x 4.3 in)"
+      },
+      "es": {
+        "name": "El Zayna Real",
+        "subtitle": "Bolso de mano insignia en piel flor",
+        "categoryName": "Bolsos de Mano",
+        "description": "La pieza emblemática de Maison Lala Zayna, El Zayna Real une la pureza de las líneas contemporáneas con la nobleza del trabajo artesanal marroquí. Cuenta con un broche escultural bañado en oro de 24 quilates.",
+        "details": [
+          "Piel de ternera flor de curtición vegetal",
+          "Herrajes artesanales bañados en oro de 24k",
+          "Forro interior en satén de seda champán",
+          "Bolsillo interior con cremallera y doble compartimento",
+          "Bandolera de piel desmontable y ajustable (105 - 120 cm)"
+        ],
+        "leatherType": "Piel de becerro flor excepcional",
+        "dimensions": "28 x 21 x 11 cm"
+      },
+      "nl": {
+        "name": "De Zayna Royal",
+        "subtitle": "Kenmerkende handtas in volnerf leer",
+        "categoryName": "Handtassen",
+        "description": "Het meesterwerk van Maison Lala Zayna, De Zayna Royal combineert strakke moderne lijnen met koninklijk Marokkaans vakmanschap. Voorzien van een 24-karaats vergulde sluiting geïnspireerd op Moorse paleizen.",
+        "details": [
+          "Plantaardig gelooid volnerf kalfsleer",
+          "24-karaats verguld luxueus sluitwerk",
+          "Binnenvoering van champagne zijdesatijn",
+          "Binnenvak met rits en dubbel telefoonvak",
+          "Afneembare en verstelbare leren schouderriem (105 - 120 cm)"
+        ],
+        "leatherType": "Hoogwaardig volnerf kalfsleer",
+        "dimensions": "28 x 21 x 11 cm"
+      }
+    }
+  },
+  {
+    "id": "lz-02",
+    "slug": "le-marrakech-cabas",
+    "price": 520,
+    "rating": 5.0,
+    "reviewsCount": 35,
+    "isBestseller": true,
+    "isNew": false,
+    "category": "tote",
+    "images": [
+      "https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=900&q=80"
+    ],
+    "colors": [
+      { "name": "Camel Sahara", "hex": "#b57242" },
+      { "name": "Noir Onyx", "hex": "#111111" },
+      { "name": "Bordeaux Majestueux", "hex": "#581825" }
+    ],
+    "translations": {
+      "fr": {
+        "name": "Le Marrakech Cabas",
+        "subtitle": "Grand cabas de voyage & quotidien en cuir grainé",
+        "categoryName": "Cabas & Totes",
+        "description": "L'alliance parfaite de l'élégance et de la capacité. Le Marrakech Cabas accueille votre ordinateur portable 14'', vos essentiels du jour ou vos affaires d'escapade de week-end avec une aisance royale.",
+        "details": [
+          "Cuir grainé souple italien sélectionné à la main",
+          "Pochette amovible zippée assortie incluse",
+          "Pieds de fond de sac en laiton doré protecteurs",
+          "Anses renforcées pour un porté épaule d'un confort absolu",
+          "Fermeture centrale par bouton aimanté invisible"
+        ],
+        "leatherType": "Cuir grainé souple ultra-résistant",
+        "dimensions": "40 x 30 x 15 cm"
+      },
+      "en": {
+        "name": "The Marrakech Tote",
+        "subtitle": "Generous everyday & travel grained leather tote",
+        "categoryName": "Totes",
+        "description": "The quintessential marriage of capacity and sophistication. The Marrakech Tote seamlessly accommodates your 14'' laptop, daily essentials, or weekend getaway treasures with regal grace.",
+        "details": [
+          "Supple Italian pebbled calf leather hand-selected",
+          "Matching zipped removable companion pouch included",
+          "Protective brass bottom feet in warm gold",
+          "Reinforced handles designed for ergonomic shoulder carry",
+          "Concealed magnetic top closure"
+        ],
+        "leatherType": "Supple scratch-resistant pebbled leather",
+        "dimensions": "40 x 30 x 15 cm (15.7 x 11.8 x 5.9 in)"
+      },
+      "es": {
+        "name": "El Marrakech Tote",
+        "subtitle": "Gran bolso tote de diario y viaje en piel granulada",
+        "categoryName": "Bolsos Tote",
+        "description": "La combinación ideal de elegancia y amplitud. El Marrakech Tote acoge cómodamente un portátil de 14'', documentos y pertenencias diarias con distinción impecable.",
+        "details": [
+          "Piel de becerro granulada flexible de origen italiano",
+          "Neceser extraíble con cremallera a juego incluido",
+          "Tacos metálicos de protección en la base en latón dorado",
+          "Asas reforzadas para llevar al hombro con máxima comodidad",
+          "Cierre magnético oculto de alta seguridad"
+        ],
+        "leatherType": "Piel granulada flexible de alta resistencia",
+        "dimensions": "40 x 30 x 15 cm"
+      },
+      "nl": {
+        "name": "De Marrakech Shopper",
+        "subtitle": "Ruime alledaagse & reistas in generfd leer",
+        "categoryName": "Shoppers & Totes",
+        "description": "De ultieme harmonie tussen ruimte en koninklijke verfijning. De Marrakech Shopper biedt moeiteloos plaats aan een 14'' laptop en al uw dagelijkse benodigdheden met tijdloze klasse.",
+        "details": [
+          "Zacht Italiaans generfd kalfsleer",
+          "Inclusief bijpassend uitneembaar etui met rits",
+          "Gouden beschermende metalen noppen aan de onderzijde",
+          "Versterkte handvatten voor comfortabel dragen over de schouder",
+          "Onzichtbare magnetische sluiting"
+        ],
+        "leatherType": "Zacht krasbestendig generfd leer",
+        "dimensions": "40 x 30 x 15 cm"
+      }
+    }
+  },
+  {
+    "id": "lz-03",
+    "slug": "la-soiree-clutch",
+    "price": 340,
+    "rating": 4.8,
+    "reviewsCount": 27,
+    "isBestseller": false,
+    "isNew": true,
+    "category": "clutch",
+    "images": [
+      "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80"
+    ],
+    "colors": [
+      { "name": "Or Impérial", "hex": "#d4af37" },
+      { "name": "Noir Velours", "hex": "#1c1917" },
+      { "name": "Blanc Nacré", "hex": "#f5f5f0" }
+    ],
+    "translations": {
+      "fr": {
+        "name": "La Soirée Zayna",
+        "subtitle": "Pochette de gala sculptée avec chaîne dorée",
+        "categoryName": "Pochettes & Soirée",
+        "description": "Conçue pour les soirées les plus prestigieuses et les célébrations inoubliables. Cette minaudière rigide en cuir lisse est soulignée d'une chaîne maille serpentine amovible et d'un fermoir orné d'une incrustation nacrée.",
+        "details": [
+          "Cuir de veau satiné haute brillance",
+          "Chaîne joaillière détachable dorée à l'or fin",
+          "Miroir de courtoisie intégré sous le rabat",
+          "Compartiment carte de crédit & smartphone grand format",
+          "Fermeture à clip bijou gravée 'Lala Zayna'"
+        ],
+        "leatherType": "Cuir de veau satiné & métal doré miroir",
+        "dimensions": "22 x 13 x 5 cm"
+      },
+      "en": {
+        "name": "The Soirée Zayna",
+        "subtitle": "Sculpted gala clutch with detachable golden chain",
+        "categoryName": "Clutches & Evening",
+        "description": "Tailored for the world's most glamorous evenings and memorable gala nights. This sleek structured clutch features a serpentine jewelry chain and a mother-of-pearl engraved jewel clasp.",
+        "details": [
+          "Lustrous satin-finish calfskin leather",
+          "Detachable fine jewelry snake chain in polished gold",
+          "Built-in compact vanity mirror under the flap",
+          "Card slots & fits all modern smartphones",
+          "Lala Zayna laser-engraved jewel closure"
+        ],
+        "leatherType": "Satin-finish calfskin & polished brass",
+        "dimensions": "22 x 13 x 5 cm (8.6 x 5.1 x 2 in)"
+      },
+      "es": {
+        "name": "La Soirée Zayna",
+        "subtitle": "Cartera de mano de gala con cadena dorada desmontable",
+        "categoryName": "Bolsos de Fiesta",
+        "description": "Diseñada para las veladas más sofisticadas y eventos inolvidables. Estructura rígida en piel suave con cadena de serpiente joya y broche joya con detalles nacarados.",
+        "details": [
+          "Piel de becerro con acabado satinado de alto brillo",
+          "Cadena joya desmontable bañada en oro fino",
+          "Espejo de cortesía integrado bajo la solapa",
+          "Ranuras para tarjetas y espacio para smartphone grande",
+          "Cierre joya grabado 'Lala Zayna'"
+        ],
+        "leatherType": "Piel satinada y latón pulido",
+        "dimensions": "22 x 13 x 5 cm"
+      },
+      "nl": {
+        "name": "De Soirée Zayna",
+        "subtitle": "Exclusieve gala clutch met afneembare gouden ketting",
+        "categoryName": "Clutches & Avondtassen",
+        "description": "Ontworpen voor de meest luxueuze avonden en gala-evenementen. Deze elegante clutch schittert met een fijne slangenketting en een juweelsluiting met parelmoeraccenten.",
+        "details": [
+          "Glanzend kalfsleer met satijnglans",
+          "Afneembare vergulde slangenketting",
+          "Ingebouwde make-upspiegel onder de klep",
+          "Kaartvakjes en ruimte voor grote smartphones",
+          "Juweelsluiting gegraveerd met 'Lala Zayna'"
+        ],
+        "leatherType": "Satijn kalfsleer & gepolijst goudkleurig messing",
+        "dimensions": "22 x 13 x 5 cm"
+      }
+    }
+  },
+  {
+    "id": "lz-04",
+    "slug": "latlas-crossbody",
+    "price": 410,
+    "rating": 4.9,
+    "reviewsCount": 52,
+    "isBestseller": true,
+    "isNew": false,
+    "category": "crossbody",
+    "images": [
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80"
+    ],
+    "colors": [
+      { "name": "Terre de Sienne", "hex": "#9c4129" },
+      { "name": "Noir Minuit", "hex": "#0f0f0f" },
+      { "name": "Olive Atlas", "hex": "#4b5320" }
+    ],
+    "translations": {
+      "fr": {
+        "name": "L'Atlas Crossbody",
+        "subtitle": "Sac bandoulière besace moderne et intemporel",
+        "categoryName": "Sacs Bandoulière",
+        "description": "Inspiré par les paysages sauvages et la noblesse des montagnes de l'Atlas, ce sac besace demi-lune allie silhouette épurée et fonctionnalité nomade. Idéal pour la femme active et élégante.",
+        "details": [
+          "Cuir de vachette semi-rigide tanné aux écorces naturelles",
+          "Rabat biseauté avec fermoir magnétique dissimulé",
+          "Poche extérieure passeport au dos",
+          "Bandoulière réglable à 5 crans sur mesure",
+          "Bords teintés et cirés à la main au fer chaud"
+        ],
+        "leatherType": "Cuir de vachette ciré artisanal",
+        "dimensions": "24 x 18 x 8 cm"
+      },
+      "en": {
+        "name": "The Atlas Crossbody",
+        "subtitle": "Modern timeless saddle crossbody bag",
+        "categoryName": "Crossbody Bags",
+        "description": "Inspired by the rugged poetry and grandeur of the Atlas Mountains, this half-moon saddle bag merges architectural minimalism with effortless versatility. The ultimate companion for cosmopolitan days.",
+        "details": [
+          "Semi-rigid natural bark-tanned cowhide leather",
+          "Beveled contour flap with concealed magnetic snap",
+          "Exterior quick-access back slip pocket",
+          "Bespoke 5-position adjustable shoulder strap",
+          "Hand-burnished edges heated and polished by master artisans"
+        ],
+        "leatherType": "Hand-burnished artisanal cowhide",
+        "dimensions": "24 x 18 x 8 cm (9.4 x 7 x 3.1 in)"
+      },
+      "es": {
+        "name": "El Atlas Crossbody",
+        "subtitle": "Bandolera moderna de silueta semicircular atemporal",
+        "categoryName": "Bolsos Bandolera",
+        "description": "Inspirado en la nobleza de la cordillera del Atlas, este bolso une líneas limpias con practicidad urbana diaria. Diseñado para la mujer dinámica que no renuncia al refinamiento.",
+        "details": [
+          "Piel vacuna curtida de forma artesanal con corteza vegetal",
+          "Solapa biselada con cierre magnético oculto",
+          "Bolsillo posterior exterior de acceso rápido",
+          "Correa ajustable con 5 posiciones personalizadas",
+          "Bordes tintados y pulidos a mano al calor"
+        ],
+        "leatherType": "Piel vacuna encerada tradicional",
+        "dimensions": "24 x 18 x 8 cm"
+      },
+      "nl": {
+        "name": "De Atlas Crossbody",
+        "subtitle": "Moderne tijdloze halvemaan schoudertas",
+        "categoryName": "Crossbody Tassen",
+        "description": "Geïnspireerd op de majestueuze Atlasgebergten combineert deze saddle bag verfijnde eenvoud met alledaags gemak. Perfect voor de moderne en stijlbewuste kosmopoliet.",
+        "details": [
+          "Plantaardig gelooid halfstijf rundleer",
+          "Klep met verdekte magneetsluiting",
+          "Achtervak voor snelle toegang tot paspoort of telefoon",
+          "Verstelbare leren draagriem met 5 standen",
+          "Ambachtelijk met de hand gepolijste en verwarmde randen"
+        ],
+        "leatherType": "Ambachtelijk gewaxt rundleer",
+        "dimensions": "24 x 18 x 8 cm"
+      }
+    }
+  },
+  {
+    "id": "lz-05",
+    "slug": "le-palais-seau",
+    "price": 460,
+    "rating": 4.9,
+    "reviewsCount": 19,
+    "isBestseller": false,
+    "isNew": true,
+    "category": "bucket",
+    "images": [
+      "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=900&q=80"
+    ],
+    "colors": [
+      { "name": "Ivoire Majorelle", "hex": "#f3eee5" },
+      { "name": "Chocolat Noir", "hex": "#2d1e18" },
+      { "name": "Moutarde Ocre", "hex": "#c8963e" }
+    ],
+    "translations": {
+      "fr": {
+        "name": "Le Palais Seau",
+        "subtitle": "Sac seau architectural avec poignée sculptée",
+        "categoryName": "Sacs Seau",
+        "description": "Une silhouette cylindrique remarquable rappelant les fontaines de marbre des riads impériaux. Fermeture par cordon en cuir orné de perles dorées et doublure en popeline de coton biologique.",
+        "details": [
+          "Cuir lisse structuré d'origine française",
+          "Cordon de serrage en cuir nappa avec perles dorées",
+          "Poignée rigide sculptée et bandoulière amovible",
+          "Base rigide assurant une tenue parfaite",
+          "Finition bords francs lustrés à la cire d'abeille"
+        ],
+        "leatherType": "Cuir de veau lisse structuré",
+        "dimensions": "20 x 23 x 16 cm"
+      },
+      "en": {
+        "name": "The Palais Bucket",
+        "subtitle": "Architectural bucket bag with sculpted top handle",
+        "categoryName": "Bucket Bags",
+        "description": "A striking cylindrical silhouette reminiscent of the marble fountains in imperial riads. Cinched with a nappa leather drawstring adorned with gilded brass beads and lined in crisp organic cotton poplin.",
+        "details": [
+          "Structured smooth French calfskin",
+          "Supple nappa leather drawstring with gold-plated bead weights",
+          "Sculptural top handle plus detachable shoulder strap",
+          "Reinforced circular base keeping flawless upright posture",
+          "Beeswax hand-burnished raw edges"
+        ],
+        "leatherType": "Smooth structured calfskin",
+        "dimensions": "20 x 23 x 16 cm (7.8 x 9 x 6.3 in)"
+      },
+      "es": {
+        "name": "El Palais Seau",
+        "subtitle": "Bolso saco arquitectónico con asa esculpida",
+        "categoryName": "Bolsos Saco",
+        "description": "Una silueta cilíndrica escultórica que evoca las fuentes de mármol de los riads imperiales. Cierre con cordón de piel con cuentas doradas y forro en popelín de algodón orgánico.",
+        "details": [
+          "Piel de becerro lisa y estructurada de curtiduría selecta",
+          "Cordón corredizo en napa con remates dorados",
+          "Asa rígida superior y bandolera larga desmontable",
+          "Base circular reforzada de gran estabilidad",
+          "Acabado de cantos con cera de abejas artesanal"
+        ],
+        "leatherType": "Piel de becerro lisa estructurada",
+        "dimensions": "20 x 23 x 16 cm"
+      },
+      "nl": {
+        "name": "De Palais Buideltas",
+        "subtitle": "Architectonische bucket bag met sierlijk handvat",
+        "categoryName": "Buideltassen",
+        "description": "Een opvallende cilindrische vorm geïnspireerd door de marmeren fonteinen in keizerlijke riads. Aansnoerbaar met een nappa leren koord versierd met vergulde kralen.",
+        "details": [
+          "Gestructureerd glad kalfsleer",
+          "Aantrekkoord van soepel nappaleer met gouden details",
+          "Vast gebogen handvat en afneembare schouderband",
+          "Stevige ronde bodem voor een perfecte stand",
+          "Ambachtelijke randafwerking met natuurlijke bijenwas"
+        ],
+        "leatherType": "Glad gestructureerd kalfsleer",
+        "dimensions": "20 x 23 x 16 cm"
+      }
+    }
+  },
+  {
+    "id": "lz-06",
+    "slug": "landalouse-matelasse",
+    "price": 540,
+    "rating": 5.0,
+    "reviewsCount": 41,
+    "isBestseller": true,
+    "isNew": false,
+    "category": "handbag",
+    "images": [
+      "https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=900&q=80"
+    ],
+    "colors": [
+      { "name": "Noir Caviar", "hex": "#141414" },
+      { "name": "Rouge Rubis", "hex": "#7f1d1d" },
+      { "name": "Nude Poudré", "hex": "#d6bc9f" }
+    ],
+    "translations": {
+      "fr": {
+        "name": "L'Andalouse Matelassée",
+        "subtitle": "Sac à rabat matelassé avec chaîne gourmette coulissante",
+        "categoryName": "Sacs à Main",
+        "description": "L'hommage de Lala Zayna à la poésie andalouse et à la haute couture parisienne. Son matelassage géométrique exclusif en motif moucharabieh offre un toucher d'une douceur sensorielle inégalée.",
+        "details": [
+          "Cuir d'agneau plongé ultra-doux au matelassage exclusif",
+          "Chaîne coulissante permettant un porté simple ou double épaule",
+          "Fermoir tournant monogramme Lala Zayna or 24k",
+          "Trois compartiments intérieurs dont un zippé",
+          "Finition cousu sellier main invisible"
+        ],
+        "leatherType": "Cuir d'agneau plongé soyeux",
+        "dimensions": "26 x 16 x 8 cm"
+      },
+      "en": {
+        "name": "The Andalouse Quilted",
+        "subtitle": "Quilted flap bag with sliding dual chain strap",
+        "categoryName": "Handbags",
+        "description": "Lala Zayna's tribute to Andalusian romance and Parisian high fashion. The bespoke geometric quilting echoes traditional mashrabiya latticework in velvety, sensorial lambskin.",
+        "details": [
+          "Ultra-soft plunge lambskin with bespoke geometric quilting",
+          "Sliding dual gourmet chain for shoulder or crossbody styling",
+          "24k gold monogrammed Lala Zayna turn-lock clasp",
+          "Triple interior accordion compartments with central zip",
+          "Signature invisible artisan saddle-stitching"
+        ],
+        "leatherType": "Silky plunge lambskin",
+        "dimensions": "26 x 16 x 8 cm (10.2 x 6.3 x 3.1 in)"
+      },
+      "es": {
+        "name": "La Andaluza Acolchada",
+        "subtitle": "Bolso con solapa acolchada y cadena deslizante doble",
+        "categoryName": "Bolsos de Mano",
+        "description": "Homenaje de Lala Zayna al romance andaluz y la alta costura europea. Su acolchado geométrico exclusivo evoca los arabescos tradicionales en una piel de cordero de tacto sedoso sublime.",
+        "details": [
+          "Piel de cordero plongé ultrasuave con acolchado exclusivo",
+          "Cadena deslizante para llevar al hombro simple o doble",
+          "Cierre giratorio con monograma Lala Zayna en oro 24k",
+          "Tres compartimentos interiores con bolsillo central con cremallera",
+          "Costura guarnicionera invisible hecha a mano"
+        ],
+        "leatherType": "Piel de cordero plongé sedosa",
+        "dimensions": "26 x 16 x 8 cm"
+      },
+      "nl": {
+        "name": "De Andalusische Gewatteerd",
+        "subtitle": "Gewatteerde tas met klep en dubbele schuifketting",
+        "categoryName": "Handtassen",
+        "description": "Een eerbetoon aan Andalusische poëzie en Parijse haute couture. Het geometrische stikpatroon herinnert aan Arabische motieven in boterzacht lamsleer met ongekende luxe.",
+        "details": [
+          "Zijdezacht plongé lamsleer met exclusief geometrisch reliëf",
+          "Glijdende ketting voor enkel of dubbel schouderdragen",
+          "Draaislot met 24k verguld Lala Zayna monogram",
+          "Drie binnenvakken inclusief veilige ritsverdeler",
+          "Onzichtbare handgestikte zadelsteken"
+        ],
+        "leatherType": "Fluweelzacht plongé lamsleer",
+        "dimensions": "26 x 16 x 8 cm"
+      }
+    }
+  }
+]
