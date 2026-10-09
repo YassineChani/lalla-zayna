@@ -14,9 +14,18 @@
       "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=900&q=80"
     ],
     "colors": [
-      { "name": "Noir Ébène", "hex": "#1a1a1a" },
-      { "name": "Cognac Royal", "hex": "#8c4e28" },
-      { "name": "Vert Émeraude", "hex": "#1b4332" }
+      {
+        "name": "Noir Ébène",
+        "hex": "#1a1a1a"
+      },
+      {
+        "name": "Cognac Royal",
+        "hex": "#8c4e28"
+      },
+      {
+        "name": "Vert Émeraude",
+        "hex": "#1b4332"
+      }
     ],
     "translations": {
       "fr": {
@@ -85,7 +94,7 @@
     "id": "lz-02",
     "slug": "le-marrakech-cabas",
     "price": 520,
-    "rating": 5.0,
+    "rating": 5,
     "reviewsCount": 35,
     "isBestseller": true,
     "isNew": false,
@@ -96,9 +105,18 @@
       "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=900&q=80"
     ],
     "colors": [
-      { "name": "Camel Sahara", "hex": "#b57242" },
-      { "name": "Noir Onyx", "hex": "#111111" },
-      { "name": "Bordeaux Majestueux", "hex": "#581825" }
+      {
+        "name": "Camel Sahara",
+        "hex": "#b57242"
+      },
+      {
+        "name": "Noir Onyx",
+        "hex": "#111111"
+      },
+      {
+        "name": "Bordeaux Majestueux",
+        "hex": "#581825"
+      }
     ],
     "translations": {
       "fr": {
@@ -178,9 +196,18 @@
       "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80"
     ],
     "colors": [
-      { "name": "Or Impérial", "hex": "#d4af37" },
-      { "name": "Noir Velours", "hex": "#1c1917" },
-      { "name": "Blanc Nacré", "hex": "#f5f5f0" }
+      {
+        "name": "Or Impérial",
+        "hex": "#d4af37"
+      },
+      {
+        "name": "Noir Velours",
+        "hex": "#1c1917"
+      },
+      {
+        "name": "Blanc Nacré",
+        "hex": "#f5f5f0"
+      }
     ],
     "translations": {
       "fr": {
@@ -260,9 +287,18 @@
       "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80"
     ],
     "colors": [
-      { "name": "Terre de Sienne", "hex": "#9c4129" },
-      { "name": "Noir Minuit", "hex": "#0f0f0f" },
-      { "name": "Olive Atlas", "hex": "#4b5320" }
+      {
+        "name": "Terre de Sienne",
+        "hex": "#9c4129"
+      },
+      {
+        "name": "Noir Minuit",
+        "hex": "#0f0f0f"
+      },
+      {
+        "name": "Olive Atlas",
+        "hex": "#4b5320"
+      }
     ],
     "translations": {
       "fr": {
@@ -342,9 +378,18 @@
       "https://images.unsplash.com/photo-1591561954557-26941169b49e?auto=format&fit=crop&w=900&q=80"
     ],
     "colors": [
-      { "name": "Ivoire Majorelle", "hex": "#f3eee5" },
-      { "name": "Chocolat Noir", "hex": "#2d1e18" },
-      { "name": "Moutarde Ocre", "hex": "#c8963e" }
+      {
+        "name": "Ivoire Majorelle",
+        "hex": "#f3eee5"
+      },
+      {
+        "name": "Chocolat Noir",
+        "hex": "#2d1e18"
+      },
+      {
+        "name": "Moutarde Ocre",
+        "hex": "#c8963e"
+      }
     ],
     "translations": {
       "fr": {
@@ -413,7 +458,7 @@
     "id": "lz-06",
     "slug": "landalouse-matelasse",
     "price": 540,
-    "rating": 5.0,
+    "rating": 5,
     "reviewsCount": 41,
     "isBestseller": true,
     "isNew": false,
@@ -424,9 +469,18 @@
       "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=900&q=80"
     ],
     "colors": [
-      { "name": "Noir Caviar", "hex": "#141414" },
-      { "name": "Rouge Rubis", "hex": "#7f1d1d" },
-      { "name": "Nude Poudré", "hex": "#d6bc9f" }
+      {
+        "name": "Noir Caviar",
+        "hex": "#141414"
+      },
+      {
+        "name": "Rouge Rubis",
+        "hex": "#7f1d1d"
+      },
+      {
+        "name": "Nude Poudré",
+        "hex": "#d6bc9f"
+      }
     ],
     "translations": {
       "fr": {
