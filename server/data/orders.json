@@ -1,5 +1,44 @@
 [
   {
+    "orderId": "LZ-MV2TYN2D-ADCF11",
+    "transactionId": "TXN-BDF8D47E",
+    "status": "NOUVELLE (À LIVRER)",
+    "createdAt": "2026-10-10T20:11:59.941Z",
+    "customer": {
+      "fullName": "Yassine Chani",
+      "email": "yassine@example.com",
+      "phone": "+212 6 12 34 56 78",
+      "address": "12 Boulevard Zerktouni",
+      "city": "Casablanca",
+      "postalCode": "20000",
+      "country": "Maroc"
+    },
+    "payment": {
+      "method": "PAIEMENT À LA LIVRAISON (COD)",
+      "cardMasked": "Paiement à Réception",
+      "brand": "Espèces / TPE Livraison",
+      "status": "À ENCAISSER"
+    },
+    "items": [
+      {
+        "productId": "sac-royal-casablanca",
+        "name": "Sac Le Royal Casablanca",
+        "price": 580,
+        "quantity": 1,
+        "color": "Noir �b�ne & Or 24K",
+        "image": "assets/logo.jpg"
+      }
+    ],
+    "pricing": {
+      "subtotalEUR": 580,
+      "discountEUR": 0,
+      "shippingEUR": 0,
+      "totalEUR": 580,
+      "currency": "MAD",
+      "totalFormatted": "6322.00 MAD"
+    }
+  },
+  {
     "orderId": "LZ-MV2T29ZB-7FFC21",
     "transactionId": "TXN-C2DA9265",
     "status": "NOUVELLE (À LIVRER)",

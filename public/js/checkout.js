@@ -56,6 +56,15 @@ window.CheckoutManager = {
       });
     }
 
+    // Demo customer fill helper
+    const demoFillBtn = document.getElementById('btn-demo-fill');
+    if (demoFillBtn) {
+      demoFillBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.fillSampleCustomer();
+      });
+    }
+
     // Payment mode selection (Card vs COD)
     document.querySelectorAll('input[name="checkout_payment_mode"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
@@ -96,6 +105,16 @@ window.CheckoutManager = {
 
     this.goToStep(1);
     this.updateOrderSummary();
+
+    // Default to COD mode
+    const codRadio = document.getElementById('pay-mode-cod');
+    if (codRadio) {
+      codRadio.checked = true;
+      const btnCard = document.getElementById('btn-to-payment');
+      const btnCod = document.getElementById('btn-confirm-cod');
+      if (btnCard) btnCard.style.display = 'none';
+      if (btnCod) btnCod.style.display = 'block';
+    }
 
     const modal = document.getElementById('checkout-modal');
     const overlay = document.getElementById('checkout-overlay');
@@ -326,23 +345,80 @@ window.CheckoutManager = {
     window.showToast('Données de carte de démonstration insérées ✨');
   },
 
-  async confirmDirectCodOrder() {
-    const fullName = document.getElementById('ship-name').value.trim();
-    const email = document.getElementById('ship-email').value.trim();
-    const phone = document.getElementById('ship-phone').value.trim();
-    const address = document.getElementById('ship-address').value.trim();
-    const city = document.getElementById('ship-city').value.trim();
-    const postalCode = document.getElementById('ship-zip').value.trim();
-    const country = document.getElementById('ship-country').value.trim();
+  fillSampleCustomer() {
+    const nameEl = document.getElementById('ship-name');
+    const phoneEl = document.getElementById('ship-phone');
+    const emailEl = document.getElementById('ship-email');
+    const cityEl = document.getElementById('ship-city');
+    const zipEl = document.getElementById('ship-zip');
+    const addrEl = document.getElementById('ship-address');
+    const countryEl = document.getElementById('ship-country');
 
-    if (!fullName || !email || !address || !city) {
-      alert('Veuillez remplir vos coordonnées complètes pour la livraison');
+    if (nameEl) nameEl.value = 'Fatima Zahra El Mansouri';
+    if (phoneEl) phoneEl.value = '+212 6 61 23 45 67';
+    if (emailEl) emailEl.value = 'fatima.zahra@gmail.com';
+    if (cityEl) cityEl.value = 'Casablanca';
+    if (zipEl) zipEl.value = '20000';
+    if (addrEl) addrEl.value = 'Quartier Gauthier, Rue Jules César, Résidence Les Palmiers N° 12';
+    if (countryEl) countryEl.value = 'Maroc';
+
+    window.showToast('✨ Exemple de coordonnées marocaines complété !');
+  },
+
+  async confirmDirectCodOrder() {
+    const nameInput = document.getElementById('ship-name');
+    const emailInput = document.getElementById('ship-email');
+    const phoneInput = document.getElementById('ship-phone');
+    const addressInput = document.getElementById('ship-address');
+    const cityInput = document.getElementById('ship-city');
+    const postalCode = document.getElementById('ship-zip')?.value.trim() || '20000';
+    const country = document.getElementById('ship-country')?.value.trim() || 'Maroc';
+
+    const fullName = nameInput ? nameInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim() : '';
+    const phone = phoneInput ? phoneInput.value.trim() : '';
+    const address = addressInput ? addressInput.value.trim() : '';
+    const city = cityInput ? cityInput.value.trim() : '';
+
+    // Clear highlight styles
+    [nameInput, emailInput, phoneInput, addressInput, cityInput].forEach(inp => {
+      if (inp) inp.style.borderColor = '#c59b27';
+    });
+
+    if (!fullName) {
+      if (nameInput) { nameInput.style.borderColor = '#d32f2f'; nameInput.focus(); }
+      alert('Veuillez renseigner votre Nom et Prénom.');
+      return;
+    }
+
+    if (!phone) {
+      if (phoneInput) { phoneInput.style.borderColor = '#d32f2f'; phoneInput.focus(); }
+      alert('Veuillez renseigner votre Téléphone / WhatsApp pour le livreur.');
+      return;
+    }
+
+    if (!email) {
+      if (emailInput) { emailInput.style.borderColor = '#d32f2f'; emailInput.focus(); }
+      alert('Veuillez renseigner votre Adresse Email.');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      alert('Veuillez saisir une adresse email valide');
+      if (emailInput) { emailInput.style.borderColor = '#d32f2f'; emailInput.focus(); }
+      alert('Veuillez saisir une adresse email valide.');
+      return;
+    }
+
+    if (!city) {
+      if (cityInput) { cityInput.style.borderColor = '#d32f2f'; cityInput.focus(); }
+      alert('Veuillez indiquer votre Ville.');
+      return;
+    }
+
+    if (!address) {
+      if (addressInput) { addressInput.style.borderColor = '#d32f2f'; addressInput.focus(); }
+      alert('Veuillez indiquer votre Adresse Complète de livraison.');
       return;
     }
 
@@ -351,10 +427,17 @@ window.CheckoutManager = {
     const btn = document.getElementById('btn-confirm-cod');
     const origHtml = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span class="luxury-spinner"></span> <span>Transmission de votre commande...</span>';
+    btn.innerHTML = '<span class="luxury-spinner"></span> <span>Enregistrement de votre commande royale...</span>';
 
     const payload = {
-      items: window.CartManager.items,
+      items: window.CartManager.items.map(it => ({
+        productId: it.id,
+        name: it.name,
+        price: it.price,
+        quantity: it.quantity,
+        color: it.color,
+        image: it.image
+      })),
       customer: this.shippingData,
       paymentMethod: 'COD',
       promoCode: window.CartManager.promoCode,
@@ -380,9 +463,9 @@ window.CheckoutManager = {
           window.CartManager.clear();
           window.showToast('✨ Félicitations ! Votre commande a été transmise à nos ateliers !');
         } else {
-          alert(result.message || 'Une erreur est survenue lors du traitement.');
+          alert(result.message || 'Une erreur est survenue lors de l\'enregistrement.');
         }
-      }, 1000);
+      }, 700);
     } catch (err) {
       btn.disabled = false;
       btn.innerHTML = origHtml;
@@ -418,7 +501,14 @@ window.CheckoutManager = {
     `;
 
     const payload = {
-      items: window.CartManager.items,
+      items: window.CartManager.items.map(it => ({
+        productId: it.id,
+        name: it.name,
+        price: it.price,
+        quantity: it.quantity,
+        color: it.color,
+        image: it.image
+      })),
       customer: this.shippingData,
       paymentMethod: 'CARD',
       cardNumber: numInput,
@@ -453,7 +543,7 @@ window.CheckoutManager = {
         } else {
           alert(result.message || 'Une erreur est survenue lors du traitement du paiement.');
         }
-      }, 1400); // 1.4s luxury animation delay for genuine high-security feel
+      }, 1200);
 
     } catch (err) {
       payBtn.disabled = false;
@@ -466,24 +556,51 @@ window.CheckoutManager = {
   showOrderConfirmation(order) {
     this.goToStep(3);
 
-    document.getElementById('confirm-order-id').textContent = order.orderId;
-    document.getElementById('confirm-txn-id').textContent = order.transactionId;
-    document.getElementById('confirm-client-name').textContent = order.customer.fullName;
-    document.getElementById('confirm-client-email').textContent = order.customer.email;
-    document.getElementById('confirm-address').textContent = `${order.customer.address}, ${order.customer.postalCode} ${order.customer.city}, ${order.customer.country}`;
-    document.getElementById('confirm-total').textContent = order.pricing.totalFormatted;
+    const orderIdEl = document.getElementById('confirm-order-id');
+    if (orderIdEl) orderIdEl.textContent = order.orderId;
+
+    const payModeEl = document.getElementById('confirm-payment-mode');
+    if (payModeEl) {
+      payModeEl.textContent = (order.payment?.method || 'Paiement à la Livraison').toUpperCase();
+    }
+
+    const nameEl = document.getElementById('confirm-client-name');
+    if (nameEl) nameEl.textContent = order.customer.fullName;
+
+    const phoneEl = document.getElementById('confirm-client-phone');
+    if (phoneEl) phoneEl.textContent = order.customer.phone || 'Non précisé';
+
+    const emailEl = document.getElementById('confirm-client-email');
+    if (emailEl) emailEl.textContent = order.customer.email;
+
+    const addrEl = document.getElementById('confirm-address');
+    if (addrEl) addrEl.textContent = `${order.customer.address}, ${order.customer.city} (${order.customer.country})`;
+
+    const totalEl = document.getElementById('confirm-total');
+    if (totalEl) totalEl.textContent = order.pricing?.totalFormatted || window.CartManager.formatMoney(order.pricing?.totalEUR || 0);
 
     const itemsContainer = document.getElementById('confirm-items-list');
-    itemsContainer.innerHTML = order.items.map(item => `
-      <div class="confirm-item-row">
-        <img src="${item.image}" alt="${item.name}" class="confirm-thumb">
-        <div class="confirm-item-details">
-          <strong>${item.name}</strong>
-          <span>${item.color} — Quantité: ${item.quantity}</span>
+    if (itemsContainer && order.items) {
+      itemsContainer.innerHTML = order.items.map(item => `
+        <div class="confirm-item-row">
+          <img src="${item.image || 'assets/logo.jpg'}" alt="${item.name}" class="confirm-thumb">
+          <div class="confirm-item-details">
+            <strong>${item.name}</strong>
+            <span>${item.color ? item.color + ' — ' : ''}Quantité: ${item.quantity}</span>
+          </div>
+          <span class="confirm-item-price">${window.CartManager.formatMoney(item.price * item.quantity)}</span>
         </div>
-        <span class="confirm-item-price">${window.CartManager.formatMoney(item.price * item.quantity)}</span>
-      </div>
-    `).join('');
+      `).join('');
+    }
+
+    // Set up direct WhatsApp link
+    const waLink = document.getElementById('confirm-whatsapp-link');
+    if (waLink) {
+      const waMsg = encodeURIComponent(
+        `Bonjour Maison LALLA ZAYNA,\n\nJe viens de valider ma commande *${order.orderId}* (${order.customer.fullName}).\nTotal: ${order.pricing?.totalFormatted || ''}.\n\nJe souhaite suivre la livraison de mon sac.`
+      );
+      waLink.href = `https://wa.me/212600000000?text=${waMsg}`;
+    }
 
     // Trigger celebration toast
     window.showToast('✨ Félicitations ! Votre commande a été confirmée avec succès.');

@@ -91,23 +91,38 @@ window.CartManager = {
       item => item.id === product.id && item.color === selectedColor
     );
 
+    let articleNumber = 1;
+    let isNewArticle = false;
     if (existingIndex > -1) {
       this.items[existingIndex].quantity += quantity;
+      articleNumber = existingIndex + 1;
     } else {
       this.items.push({
         id: product.id,
         slug: product.slug,
-        name: product.translations[window.I18N.currentLang]?.name || product.translations.fr.name,
+        name: (product.translations && product.translations[window.I18N?.currentLang]?.name) || (product.translations && product.translations.fr?.name) || product.name || 'Sac d\'exception',
         price: product.price,
-        image: product.images[0],
+        image: (product.images && product.images[0]) || 'assets/logo.jpg',
         color: selectedColor,
         quantity
       });
+      articleNumber = this.items.length;
+      isNewArticle = true;
     }
 
     this.save();
-    this.openDrawer();
-    window.showToast(window.I18N.get('catalog.addToCart') + ' : ' + (product.translations[window.I18N.currentLang]?.name || product.translations.fr.name));
+
+    const activeItem = existingIndex > -1 ? this.items[existingIndex] : this.items[this.items.length - 1];
+    const totalCount = this.items.reduce((acc, it) => acc + it.quantity, 0);
+
+    // Trigger prominent luxury top floating notification
+    window.showTopNotification({
+      articleNumber: articleNumber,
+      isNewArticle: isNewArticle,
+      item: activeItem,
+      totalItems: totalCount,
+      totalEUR: this.getSubtotalEUR()
+    });
   },
 
   updateQuantity(index, delta) {
@@ -296,5 +311,171 @@ window.CartManager = {
     }
 
     document.getElementById('cart-total').textContent = this.formatMoney(totalEUR);
+  }
+};
+
+// ============================================================================
+// TOP LUXURY FLOATING NOTIFICATION ("Article X sélectionné")
+// ============================================================================
+window._topNotificationTimer = null;
+window._topNotificationRemaining = 6000;
+window._topNotificationStartTime = 0;
+
+window.showTopNotification = function(data) {
+  let container = document.getElementById('top-notification-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'top-notification-container';
+    container.className = 'top-notification-container';
+    document.body.appendChild(container);
+  }
+
+  if (window._topNotificationTimer) {
+    clearTimeout(window._topNotificationTimer);
+    window._topNotificationTimer = null;
+  }
+
+  const articleNum = data.articleNumber || 1;
+  const item = data.item || {};
+  const totalItems = data.totalItems || 1;
+  const isNew = data.isNewArticle !== false;
+  
+  const formattedPrice = window.CartManager.formatMoney(item.price || 0);
+  const formattedTotal = window.CartManager.formatMoney(data.totalEUR || ((item.price || 0) * (item.quantity || 1)));
+
+  const isAr = window.I18N && window.I18N.currentLang === 'ar';
+  const badgeText = isAr 
+    ? `✨ تم اختيار المقال ${articleNum}` 
+    : `✨ Article ${articleNum} sélectionné`;
+  
+  const statusSummary = isAr
+    ? `🛍️ مجموع السلة : <strong>${totalItems} مقال</strong> (${formattedTotal})`
+    : `🛍️ Total dans votre panier : <strong>${totalItems} article${totalItems > 1 ? 's' : ''}</strong> (${formattedTotal})`;
+
+  const btnCheckoutText = isAr
+    ? `✨ تأكيد الطلب الآن (${formattedTotal})`
+    : `✨ Commander Maintenant (${formattedTotal})`;
+
+  const btnCartText = isAr ? 'عرض السلة' : 'Voir le Panier';
+
+  container.innerHTML = `
+    <div class="top-luxury-banner" id="active-top-banner" role="alert" aria-live="assertive">
+      <div class="tlb-header">
+        <div class="tlb-badge">
+          <span class="tlb-badge-icon">✨</span>
+          <span class="tlb-badge-text">${badgeText}</span>
+        </div>
+        <div class="tlb-header-right">
+          <span class="tlb-badge-pill">Article #${articleNum}</span>
+          <button type="button" class="tlb-close" onclick="window.closeTopNotification()" aria-label="Fermer">✕</button>
+        </div>
+      </div>
+
+      <div class="tlb-body">
+        <div class="tlb-thumb-wrap">
+          <img src="${item.image || 'assets/logo.jpg'}" alt="${item.name || 'Sac'}" class="tlb-thumb">
+          <span class="tlb-item-num">N° ${articleNum}</span>
+        </div>
+        <div class="tlb-info">
+          <h4 class="tlb-product-name">${item.name || 'Sac LALLA ZAYNA'}</h4>
+          <div class="tlb-meta">
+            <span class="tlb-color-pill"><span class="tlb-color-dot"></span>${item.color || 'Finition Noble'}</span>
+            <span class="tlb-sep">·</span>
+            <span class="tlb-item-price">${formattedPrice}</span>
+            ${item.quantity > 1 ? `<span class="tlb-qty-tag">Qté: ${item.quantity}</span>` : ''}
+          </div>
+          <div class="tlb-status-bar">
+            <span>${statusSummary}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tlb-actions">
+        <button type="button" class="tlb-btn-primary" id="tlb-direct-checkout-btn">
+          ${btnCheckoutText}
+        </button>
+        <button type="button" class="tlb-btn-secondary" id="tlb-view-cart-btn">
+          ${btnCartText}
+        </button>
+      </div>
+
+      <div class="tlb-progress-track">
+        <div class="tlb-progress-bar" id="tlb-progress"></div>
+      </div>
+    </div>
+  `;
+
+  // Attach button events
+  const directBtn = document.getElementById('tlb-direct-checkout-btn');
+  if (directBtn) {
+    directBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.closeTopNotification();
+      if (window.CheckoutManager) {
+        window.CheckoutManager.openCheckoutModal();
+      }
+    });
+  }
+
+  const viewCartBtn = document.getElementById('tlb-view-cart-btn');
+  if (viewCartBtn) {
+    viewCartBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.closeTopNotification();
+      if (window.CartManager) {
+        window.CartManager.openDrawer();
+      }
+    });
+  }
+
+  const banner = document.getElementById('active-top-banner');
+  if (banner) {
+    // Hover pauses timer
+    banner.addEventListener('mouseenter', () => {
+      const bar = document.getElementById('tlb-progress');
+      if (bar) bar.style.animationPlayState = 'paused';
+      if (window._topNotificationTimer) {
+        clearTimeout(window._topNotificationTimer);
+        window._topNotificationTimer = null;
+      }
+    });
+
+    banner.addEventListener('mouseleave', () => {
+      const bar = document.getElementById('tlb-progress');
+      if (bar) bar.style.animationPlayState = 'running';
+      window._topNotificationTimer = setTimeout(() => {
+        window.closeTopNotification();
+      }, 3000);
+    });
+
+    // Animation trigger
+    requestAnimationFrame(() => {
+      banner.classList.add('visible');
+      const bar = document.getElementById('tlb-progress');
+      if (bar) {
+        bar.style.animation = 'tlbCountdown 6s linear forwards';
+      }
+    });
+  }
+
+  // Auto dismiss after 6 seconds
+  window._topNotificationTimer = setTimeout(() => {
+    window.closeTopNotification();
+  }, 6000);
+};
+
+window.closeTopNotification = function() {
+  if (window._topNotificationTimer) {
+    clearTimeout(window._topNotificationTimer);
+    window._topNotificationTimer = null;
+  }
+  const banner = document.getElementById('active-top-banner');
+  if (banner) {
+    banner.classList.remove('visible');
+    banner.classList.add('fade-out');
+    setTimeout(() => {
+      const container = document.getElementById('top-notification-container');
+      if (container) container.innerHTML = '';
+    }, 350);
   }
 };

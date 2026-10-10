@@ -547,51 +547,53 @@
       <div id="checkout-step-1">
         <div class="checkout-grid">
           <div>
-            <h3 class="checkout-panel-title" data-i18n="checkout.shippingTitle">Adresse de Livraison</h3>
+            <h3 class="checkout-panel-title">✨ Coordonnées de Livraison & Confirmation</h3>
+            <p style="font-size:0.82rem; color:#777; margin-bottom:16px">Renseignez vos coordonnées ci-dessous pour recevoir votre commande dans son écrin royal.</p>
             <form id="shipping-form">
               <div class="form-group">
-                <label class="form-label" data-i18n="checkout.fullName">Nom et Prénom</label>
-                <input type="text" id="ship-name" class="form-control" style="background:#fff; color:#111; border:1px solid #ccc" required placeholder="Lalla Sarah El Mansouri" value="Lalla Sarah El Mansouri">
+                <label class="form-label" style="font-weight:600">👤 Nom et Prénom *</label>
+                <input type="text" id="ship-name" class="form-control" style="background:#fff; color:#111; border:1px solid #c59b27; font-size:0.95rem" required placeholder="Ex: Yassine Chani ou Fatima Zahra">
               </div>
 
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                 <div class="form-group">
-                  <label class="form-label" data-i18n="checkout.email">Adresse Email</label>
-                  <input type="email" id="ship-email" class="form-control" style="background:#fff; color:#111; border:1px solid #ccc" required placeholder="sarah@luxury.com" value="sarah@luxury.com">
+                  <label class="form-label" style="font-weight:600">📱 Téléphone / WhatsApp *</label>
+                  <input type="tel" id="ship-phone" class="form-control" style="background:#fff; color:#111; border:1px solid #c59b27; font-size:0.95rem" required placeholder="Ex: 06 12 34 56 78 (Pour le livreur)">
                 </div>
                 <div class="form-group">
-                  <label class="form-label" data-i18n="checkout.phone">Téléphone</label>
-                  <input type="tel" id="ship-phone" class="form-control" style="background:#fff; color:#111; border:1px solid #ccc" placeholder="+33 6 12 34 56 78" value="+33 6 12 34 56 78">
+                  <label class="form-label" style="font-weight:600">✉️ Adresse Email *</label>
+                  <input type="email" id="ship-email" class="form-control" style="background:#fff; color:#111; border:1px solid #c59b27; font-size:0.95rem" required placeholder="Ex: votre-email@gmail.com">
                 </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" data-i18n="checkout.address">Adresse de livraison</label>
-                <input type="text" id="ship-address" class="form-control" style="background:#fff; color:#111; border:1px solid #ccc" required placeholder="14 Avenue Montaigne" value="14 Avenue Montaigne">
               </div>
 
               <div style="display:grid; grid-template-columns:1.2fr 0.8fr 1fr; gap:16px;">
                 <div class="form-group">
-                  <label class="form-label" data-i18n="checkout.city">Ville</label>
-                  <input type="text" id="ship-city" class="form-control" style="background:#fff; color:#111; border:1px solid #ccc" required placeholder="Paris" value="Paris">
+                  <label class="form-label" style="font-weight:600">🏙️ Ville *</label>
+                  <input type="text" id="ship-city" class="form-control" style="background:#fff; color:#111; border:1px solid #c59b27; font-size:0.95rem" required placeholder="Ex: Casablanca, Rabat, Marrakech...">
                 </div>
                 <div class="form-group">
-                  <label class="form-label" data-i18n="checkout.postalCode">Code Postal</label>
-                  <input type="text" id="ship-zip" class="form-control" style="background:#fff; color:#111; border:1px solid #ccc" required placeholder="75008" value="75008">
+                  <label class="form-label">Code Postal</label>
+                  <input type="text" id="ship-zip" class="form-control" style="background:#fff; color:#111; border:1px solid #ccc" placeholder="20000" value="20000">
                 </div>
                 <div class="form-group">
-                  <label class="form-label" data-i18n="checkout.country">Pays</label>
-                  <select id="ship-country" class="form-control" style="background:#fff; color:#111; border:1px solid #ccc">
-                    <option value="France">France</option>
-                    <option value="Maroc">Maroc</option>
-                    <option value="Espagne">Espagne</option>
-                    <option value="Pays-Bas">Pays-Bas (Nederland)</option>
-                    <option value="Belgique">Belgique</option>
-                    <option value="Suisse">Suisse</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="United States">United States</option>
+                  <label class="form-label" style="font-weight:600">🇲🇦 Pays *</label>
+                  <select id="ship-country" class="form-control" style="background:#fff; color:#111; border:1px solid #ccc; font-weight:600">
+                    <option value="Maroc" selected>🇲🇦 Maroc</option>
+                    <option value="France">🇫🇷 France</option>
+                    <option value="Espagne">🇪🇸 Espagne</option>
+                    <option value="Belgique">🇧🇪 Belgique</option>
+                    <option value="Pays-Bas">🇳🇱 Pays-Bas</option>
+                    <option value="Suisse">🇨🇭 Suisse</option>
+                    <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                    <option value="United States">🇺🇸 United States</option>
+                    <option value="Émirats Arabes Unis">🇦🇪 Émirats Arabes Unis</option>
                   </select>
                 </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" style="font-weight:600">📍 Adresse Complète de Livraison *</label>
+                <input type="text" id="ship-address" class="form-control" style="background:#fff; color:#111; border:1px solid #c59b27; font-size:0.95rem" required placeholder="Ex: Quartier Racine, Boulevard Al Massira, Immeuble 12, Appt 4">
               </div>
 
               <!-- Shipping Method Selection -->
@@ -600,15 +602,15 @@
                 <label class="shipping-option-card">
                   <input type="radio" name="shipping_option" value="standard" checked>
                   <div>
-                    <strong style="display:block; font-size:0.85rem" data-i18n="checkout.stdShipping">Livraison Express Sécurisée (2-3 jours ouvrés)</strong>
-                    <span style="font-size:0.75rem; color:#777">Offerte dès 300€ d'achat dans son écrin de protection</span>
+                    <strong style="display:block; font-size:0.85rem">🚚 Livraison Express Sécurisée (Gratuite)</strong>
+                    <span style="font-size:0.75rem; color:#777">Livraison soignée à domicile dans un écrin de protection luxe</span>
                   </div>
                 </label>
                 <label class="shipping-option-card">
                   <input type="radio" name="shipping_option" value="vip">
                   <div>
-                    <strong style="display:block; font-size:0.85rem" data-i18n="checkout.vipShipping">Livraison Concierge VIP avec remise en mains propres (+25€)</strong>
-                    <span style="font-size:0.75rem; color:#777">Gants blancs, créneau horaire sur mesure et bouquet de jasmin</span>
+                    <strong style="display:block; font-size:0.85rem">👑 Livraison Concierge VIP Privilège (+25€)</strong>
+                    <span style="font-size:0.75rem; color:#777">Remise en mains propres par coursier privé sur rendez-vous</span>
                   </div>
                 </label>
               </div>
@@ -616,25 +618,32 @@
               <!-- Payment Method Selection -->
               <label class="form-label" style="margin-top:18px">Choix du Mode de Règlement</label>
               <div class="shipping-options-list" style="margin-bottom:20px">
-                <label class="shipping-option-card">
-                  <input type="radio" name="checkout_payment_mode" value="card" checked id="pay-mode-card">
+                <label class="shipping-option-card" style="border:2px solid var(--color-gold); background:rgba(197,155,39,0.04)">
+                  <input type="radio" name="checkout_payment_mode" value="cod" checked id="pay-mode-cod">
                   <div>
-                    <strong style="display:block; font-size:0.85rem">💳 Paiement par Carte Bancaire (3D Secure)</strong>
-                    <span style="font-size:0.75rem; color:#777">Visa, Mastercard, Amex chiffré en direct</span>
+                    <strong style="display:block; font-size:0.9rem; color:var(--color-gold-dark)">🤝 Paiement à la Livraison (Cash on Delivery) — Recommandé</strong>
+                    <span style="font-size:0.78rem; color:#555">Réglez en toute tranquillité lors de la réception de votre sac à votre porte</span>
                   </div>
                 </label>
                 <label class="shipping-option-card">
-                  <input type="radio" name="checkout_payment_mode" value="cod" id="pay-mode-cod">
+                  <input type="radio" name="checkout_payment_mode" value="card" id="pay-mode-card">
                   <div>
-                    <strong style="display:block; font-size:0.85rem">🤝 Paiement à la Livraison / Concierge VIP</strong>
-                    <span style="font-size:0.75rem; color:#777">Réglez en toute sérénité à la réception de votre sac</span>
+                    <strong style="display:block; font-size:0.85rem">💳 Paiement par Carte Bancaire (3D Secure)</strong>
+                    <span style="font-size:0.75rem; color:#777">Visa, Mastercard, Amex, CMI chiffré en direct</span>
                   </div>
                 </label>
               </div>
 
               <div id="checkout-actions-step1">
-                <button type="button" class="btn-primary" id="btn-to-payment" style="width:100%" data-i18n="checkout.btnToPayment">Continuer vers le Paiement par Carte</button>
-                <button type="button" class="btn-primary" id="btn-confirm-cod" style="width:100%; display:none; background:linear-gradient(135deg, #c59b27, #8d6f1a); box-shadow:0 4px 15px rgba(197,155,39,0.3)">✨ Confirmer Ma Commande Directe</button>
+                <button type="button" class="btn-primary" id="btn-confirm-cod" style="width:100%; font-size:1rem; font-weight:700; padding:16px; background:linear-gradient(135deg, #c59b27, #8d6f1a); box-shadow:0 6px 20px rgba(197,155,39,0.35); border-radius:6px">
+                  ✨ CONFIRMER MA COMMANDE MAINTENANT
+                </button>
+                <button type="button" class="btn-primary" id="btn-to-payment" style="width:100%; font-size:0.95rem; font-weight:600; padding:15px; display:none">
+                  💳 Continuer vers le Paiement par Carte
+                </button>
+                <button type="button" id="btn-demo-fill" style="background:none; border:none; color:var(--color-gold-dark); font-size:0.78rem; text-decoration:underline; cursor:pointer; margin-top:10px; display:block; text-align:center; width:100%">
+                  ⚡ Remplir automatiquement un exemple pour tester (1 clic)
+                </button>
               </div>
             </form>
           </div>
@@ -781,44 +790,54 @@
           <div class="success-royal-icon">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <h3 class="checkout-panel-title" data-i18n="checkout.successTitle">Paiement Confirmé avec Succès</h3>
-          <p style="color:#777; max-width:500px; margin:0 auto 20px auto" data-i18n="checkout.successSubtitle">
-            Nous préparons votre écrin Lala Zayna avec le plus grand soin.
+          <h3 class="checkout-panel-title" id="confirm-title">✨ Commande Confirmée avec Succès</h3>
+          <p style="color:#777; max-width:500px; margin:0 auto 20px auto" id="confirm-subtitle">
+            Nous préparons votre écrin Lala Zayna avec le plus grand soin. Notre service client vous contactera très rapidement pour coordonner la livraison.
           </p>
 
           <div class="success-order-box">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px">
               <span data-i18n="checkout.orderNumber">Numéro de commande</span>
-              <strong id="confirm-order-id" style="color:var(--color-gold-dark)">LZ-2026-XXXX</strong>
+              <strong id="confirm-order-id" style="color:var(--color-gold-dark); font-size:1.05rem">LZ-2026-XXXX</strong>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:8px">
-              <span data-i18n="checkout.transactionNumber">Réf. Transaction</span>
-              <span id="confirm-txn-id" style="font-family:var(--font-mono)">TXN-XXXXXX</span>
+              <span>Mode de Règlement</span>
+              <strong id="confirm-payment-mode" style="color:#2e7d32">Paiement à la Livraison</strong>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:8px">
               <span>Client</span>
               <strong id="confirm-client-name">-</strong>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:8px">
+              <span>Téléphone</span>
+              <span id="confirm-client-phone" style="font-weight:600">-</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px">
               <span>Email de notification</span>
               <span id="confirm-client-email">-</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:8px">
-              <span>Adresse d'expédition</span>
+              <span>Adresse de livraison</span>
               <span id="confirm-address" style="text-align:right">-</span>
             </div>
-            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.1rem; border-top:1px solid #ddd; padding-top:10px; margin-top:10px">
-              <span>Montant Réglé</span>
-              <span id="confirm-total">0 €</span>
+            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.15rem; border-top:1px solid #ddd; padding-top:10px; margin-top:10px">
+              <span>Total Commande</span>
+              <span id="confirm-total" style="color:var(--color-gold-dark)">0 €</span>
             </div>
 
             <h5 style="margin-top:20px; margin-bottom:8px; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em">Articles de votre commande</h5>
             <div id="confirm-items-list"></div>
           </div>
 
-          <div style="display:flex; justify-content:center; gap:16px; margin-top:28px">
-            <button class="btn-secondary" style="color:#111; border-color:#ccc" onclick="window.print()" data-i18n="checkout.downloadReceipt">Imprimer le Reçu</button>
-            <button class="btn-primary" onclick="CheckoutManager.closeCheckoutModal()" data-i18n="checkout.continueShopping">Retourner à la Boutique</button>
+          <div style="margin-top:22px; display:flex; flex-direction:column; align-items:center; gap:12px">
+            <a id="confirm-whatsapp-link" href="#" target="_blank" class="btn-primary" style="background:#25D366; color:#fff; border:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; max-width:420px; padding:14px; font-weight:600; text-decoration:none; box-shadow:0 4px 15px rgba(37,211,102,0.3)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+              <span>Suivre ma commande en direct sur WhatsApp</span>
+            </a>
+            <div style="display:flex; justify-content:center; gap:16px;">
+              <button class="btn-secondary" style="color:#111; border-color:#ccc" onclick="window.print()" data-i18n="checkout.downloadReceipt">Imprimer le Reçu</button>
+              <button class="btn-primary" onclick="CheckoutManager.closeCheckoutModal()" data-i18n="checkout.continueShopping">Retourner à la Boutique</button>
+            </div>
           </div>
         </div>
       </div>
