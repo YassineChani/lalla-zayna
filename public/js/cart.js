@@ -142,22 +142,17 @@ window.CartManager = {
       totalEUR: this.getSubtotalEUR()
     });
 
-    // Update banner inside checkout modal
-    const bannerTitle = document.getElementById('checkout-selected-title');
-    const bannerDesc = document.getElementById('checkout-selected-desc');
-    if (bannerTitle) {
-      bannerTitle.textContent = `✨ Article ${articleNumber} sélectionné : ${activeItem.name}`;
-    }
-    if (bannerDesc) {
-      bannerDesc.textContent = `${activeItem.color} — ${this.formatMoney(activeItem.price)} | Renseignez vos coordonnées ci-dessous pour confirmer :`;
-    }
+    // Store last added article info for commande.html to display
+    const activeItem = existingIndex > -1 ? this.items[existingIndex] : this.items[this.items.length - 1];
+    localStorage.setItem('lz_last_added', JSON.stringify({
+      articleNumber,
+      item: activeItem,
+      totalCount: this.items.reduce((acc, it) => acc + it.quantity, 0),
+      time: Date.now()
+    }));
 
-    // ✅ DIRECTLY REDIRECT / OPEN CHECKOUT MODAL SO USER ENTERS EMAIL & PHONE IMMEDIATELY
-    if (window.CheckoutManager && typeof window.CheckoutManager.openCheckoutModal === 'function') {
-      setTimeout(() => {
-        window.CheckoutManager.openCheckoutModal();
-      }, 100);
-    }
+    // ✅ DIRECT REDIRECTION TO COMMANDE PAGE
+    window.location.href = 'commande.html';
   },
 
   _getOrCreateSessionId() {

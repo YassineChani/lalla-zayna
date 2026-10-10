@@ -17,8 +17,7 @@ window.CheckoutManager = {
     if (proceedBtn) {
       proceedBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        window.CartManager.closeDrawer();
-        this.openCheckoutModal();
+        window.location.href = 'commande.html';
       });
     }
 
