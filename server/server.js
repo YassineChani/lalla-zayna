@@ -387,8 +387,82 @@ app.post('/api/promo/validate', (req, res) => {
   }
 });
 
+// ====================================================
+// CART SESSION API - Save articles to DB per session
+// ====================================================
+
+// In-memory cart sessions (keyed by sessionId)
+const cartSessions = new Map();
+
+// POST /api/cart/add → save article to server-side session
+app.post('/api/cart/add', (req, res) => {
+  const { sessionId, product, quantity = 1, color } = req.body;
+
+  if (!sessionId || !product || !product.id) {
+    return res.status(400).json({ success: false, message: 'Données invalides' });
+  }
+
+  // Get or create cart session
+  let cart = cartSessions.get(sessionId) || { sessionId, items: [], updatedAt: null };
+
+  const selectedColor = color || 'Finition Noble';
+  const existingIndex = cart.items.findIndex(
+    item => item.id === product.id && item.color === selectedColor
+  );
+
+  let articleNumber;
+  if (existingIndex > -1) {
+    cart.items[existingIndex].quantity += quantity;
+    articleNumber = existingIndex + 1;
+  } else {
+    cart.items.push({
+      id: sanitizeText(product.id, 64),
+      name: sanitizeText(product.name || 'Sac d\'exception', 120),
+      price: Math.max(0, parseFloat(product.price) || 0),
+      image: sanitizeText(product.image || '', 500),
+      color: sanitizeText(selectedColor, 60),
+      quantity: Math.min(10, Math.max(1, parseInt(quantity, 10) || 1)),
+      addedAt: new Date().toISOString()
+    });
+    articleNumber = cart.items.length;
+  }
+
+  cart.updatedAt = new Date().toISOString();
+  cart.totalItems = cart.items.reduce((acc, it) => acc + it.quantity, 0);
+  cart.subtotalEUR = cart.items.reduce((acc, it) => acc + it.price * it.quantity, 0);
+
+  cartSessions.set(sessionId, cart);
+
+  // Clean old sessions (keep max 500 sessions in memory)
+  if (cartSessions.size > 500) {
+    const oldestKey = cartSessions.keys().next().value;
+    cartSessions.delete(oldestKey);
+  }
+
+  console.log(`[CART] Session ${sessionId.slice(0,8)}: Article N°${articleNumber} ajouté — Total: ${cart.totalItems} articles`);
+
+  res.json({
+    success: true,
+    articleNumber,
+    totalItems: cart.totalItems,
+    subtotalEUR: cart.subtotalEUR,
+    cart: cart.items
+  });
+});
+
+// GET /api/cart/session/:id → retrieve cart session
+app.get('/api/cart/session/:sessionId', (req, res) => {
+  const sessionId = req.params.sessionId;
+  const cart = cartSessions.get(sessionId);
+  if (!cart) {
+    return res.json({ success: true, cart: [], totalItems: 0, subtotalEUR: 0 });
+  }
+  res.json({ success: true, ...cart });
+});
+
 // Checkout Simulation (PCI-DSS compliant: Card numbers never stored unmasked)
 app.post('/api/checkout', checkoutLimiter, (req, res) => {
+
   const {
     customer,
     items,

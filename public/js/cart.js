@@ -115,6 +115,24 @@ window.CartManager = {
     const activeItem = existingIndex > -1 ? this.items[existingIndex] : this.items[this.items.length - 1];
     const totalCount = this.items.reduce((acc, it) => acc + it.quantity, 0);
 
+    // ✅ Save to server-side DB (async, non-blocking)
+    const sessionId = this._getOrCreateSessionId();
+    fetch('/api/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId,
+        product: {
+          id: activeItem.id,
+          name: activeItem.name,
+          price: activeItem.price,
+          image: activeItem.image
+        },
+        quantity,
+        color: selectedColor
+      })
+    }).catch(() => {}); // silent fail — localStorage is fallback
+
     // Trigger prominent luxury top floating notification
     window.showTopNotification({
       articleNumber: articleNumber,
@@ -123,6 +141,15 @@ window.CartManager = {
       totalItems: totalCount,
       totalEUR: this.getSubtotalEUR()
     });
+  },
+
+  _getOrCreateSessionId() {
+    let sid = localStorage.getItem('lz_session_id');
+    if (!sid) {
+      sid = 'lzs_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem('lz_session_id', sid);
+    }
+    return sid;
   },
 
   updateQuantity(index, delta) {
@@ -338,43 +365,30 @@ window.showTopNotification = function(data) {
   const articleNum = data.articleNumber || 1;
   const item = data.item || {};
   const totalItems = data.totalItems || 1;
-  const isNew = data.isNewArticle !== false;
   
   const formattedPrice = window.CartManager.formatMoney(item.price || 0);
   const formattedTotal = window.CartManager.formatMoney(data.totalEUR || ((item.price || 0) * (item.quantity || 1)));
 
-  const isAr = window.I18N && window.I18N.currentLang === 'ar';
-  const badgeText = isAr 
-    ? `✨ تم اختيار المقال ${articleNum}` 
-    : `✨ Article ${articleNum} sélectionné`;
-  
-  const statusSummary = isAr
-    ? `🛍️ مجموع السلة : <strong>${totalItems} مقال</strong> (${formattedTotal})`
-    : `🛍️ Total dans votre panier : <strong>${totalItems} article${totalItems > 1 ? 's' : ''}</strong> (${formattedTotal})`;
-
-  const btnCheckoutText = isAr
-    ? `✨ تأكيد الطلب الآن (${formattedTotal})`
-    : `✨ Commander Maintenant (${formattedTotal})`;
-
-  const btnCartText = isAr ? 'عرض السلة' : 'Voir le Panier';
-
   container.innerHTML = `
     <div class="top-luxury-banner" id="active-top-banner" role="alert" aria-live="assertive">
+      
+      <!-- Badge Header -->
       <div class="tlb-header">
         <div class="tlb-badge">
-          <span class="tlb-badge-icon">✨</span>
-          <span class="tlb-badge-text">${badgeText}</span>
+          <span class="tlb-badge-icon">✅</span>
+          <span class="tlb-badge-text">Article ${articleNum} enregistré dans votre panier</span>
         </div>
         <div class="tlb-header-right">
-          <span class="tlb-badge-pill">Article #${articleNum}</span>
+          <span class="tlb-badge-pill" style="background:rgba(46,125,50,0.25); border-color:#4caf50; color:#a5d6a7">N° ${articleNum}</span>
           <button type="button" class="tlb-close" onclick="window.closeTopNotification()" aria-label="Fermer">✕</button>
         </div>
       </div>
 
+      <!-- Article Info -->
       <div class="tlb-body">
         <div class="tlb-thumb-wrap">
           <img src="${item.image || 'assets/logo.jpg'}" alt="${item.name || 'Sac'}" class="tlb-thumb">
-          <span class="tlb-item-num">N° ${articleNum}</span>
+          <span class="tlb-item-num" style="background:#4caf50">✓${articleNum}</span>
         </div>
         <div class="tlb-info">
           <h4 class="tlb-product-name">${item.name || 'Sac LALLA ZAYNA'}</h4>
@@ -382,20 +396,23 @@ window.showTopNotification = function(data) {
             <span class="tlb-color-pill"><span class="tlb-color-dot"></span>${item.color || 'Finition Noble'}</span>
             <span class="tlb-sep">·</span>
             <span class="tlb-item-price">${formattedPrice}</span>
-            ${item.quantity > 1 ? `<span class="tlb-qty-tag">Qté: ${item.quantity}</span>` : ''}
           </div>
           <div class="tlb-status-bar">
-            <span>${statusSummary}</span>
+            <span>🛍️ Panier : <strong>${totalItems} article${totalItems > 1 ? 's' : ''}</strong> — Total : <strong style="color:#f7e096">${formattedTotal}</strong></span>
+          </div>
+          <div style="font-size:0.7rem; color:#a5d6a7; margin-top:3px; font-weight:600">
+            ✅ Sauvegardé sur le serveur · Cliquez pour commander
           </div>
         </div>
       </div>
 
+      <!-- Action Buttons -->
       <div class="tlb-actions">
-        <button type="button" class="tlb-btn-primary" id="tlb-direct-checkout-btn">
-          ${btnCheckoutText}
+        <button type="button" class="tlb-btn-primary" id="tlb-direct-checkout-btn" style="font-size:0.88rem; font-weight:700">
+          🛍️ Commander — Entrer Email &amp; Numéro →
         </button>
         <button type="button" class="tlb-btn-secondary" id="tlb-view-cart-btn">
-          ${btnCartText}
+          Voir Panier
         </button>
       </div>
 
@@ -405,12 +422,13 @@ window.showTopNotification = function(data) {
     </div>
   `;
 
-  // Attach button events
+  // ✅ Button "Commander" → ouvre directement le checkout modal (formulaire email/tel/adresse)
   const directBtn = document.getElementById('tlb-direct-checkout-btn');
   if (directBtn) {
     directBtn.addEventListener('click', (e) => {
       e.preventDefault();
       window.closeTopNotification();
+      // Open checkout modal directly (not cart drawer)
       if (window.CheckoutManager) {
         window.CheckoutManager.openCheckoutModal();
       }
