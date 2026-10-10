@@ -1246,10 +1246,18 @@
         }
       },
 
-      logout() {
+      async logout() {
+        if (this.token) {
+          try {
+            await fetch('/api/admin/logout', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${this.token}` }
+            });
+          } catch (e) {}
+        }
         this.token = null;
         localStorage.removeItem('lz_admin_token');
-        this.toast('Déconnexion effectuée.');
+        this.toast('Déconnexion sécurisée effectuée.');
         this.showLogin();
       },
 
