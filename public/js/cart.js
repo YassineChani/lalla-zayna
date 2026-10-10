@@ -141,6 +141,23 @@ window.CartManager = {
       totalItems: totalCount,
       totalEUR: this.getSubtotalEUR()
     });
+
+    // Update banner inside checkout modal
+    const bannerTitle = document.getElementById('checkout-selected-title');
+    const bannerDesc = document.getElementById('checkout-selected-desc');
+    if (bannerTitle) {
+      bannerTitle.textContent = `✨ Article ${articleNumber} sélectionné : ${activeItem.name}`;
+    }
+    if (bannerDesc) {
+      bannerDesc.textContent = `${activeItem.color} — ${this.formatMoney(activeItem.price)} | Renseignez vos coordonnées ci-dessous pour confirmer :`;
+    }
+
+    // ✅ DIRECTLY REDIRECT / OPEN CHECKOUT MODAL SO USER ENTERS EMAIL & PHONE IMMEDIATELY
+    if (window.CheckoutManager && typeof window.CheckoutManager.openCheckoutModal === 'function') {
+      setTimeout(() => {
+        window.CheckoutManager.openCheckoutModal();
+      }, 100);
+    }
   },
 
   _getOrCreateSessionId() {

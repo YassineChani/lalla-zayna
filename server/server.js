@@ -61,8 +61,15 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static Assets with caching
-app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: '1h' }));
+// Static Assets (no cache in dev so browser always gets latest JS/CSS immediately)
+app.use(express.static(path.join(__dirname, '..', 'public'), {
+  maxAge: 0,
+  setHeaders: (res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+}));
 
 // ====================================================
 // 2. BRUTE-FORCE & DDOS RATE LIMITERS
