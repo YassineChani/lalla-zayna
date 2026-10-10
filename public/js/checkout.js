@@ -56,6 +56,28 @@ window.CheckoutManager = {
       });
     }
 
+    // Payment mode selection (Card vs COD)
+    document.querySelectorAll('input[name="checkout_payment_mode"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const val = e.target.value;
+        const btnCard = document.getElementById('btn-to-payment');
+        const btnCod = document.getElementById('btn-confirm-cod');
+        if (val === 'cod') {
+          if (btnCard) btnCard.style.display = 'none';
+          if (btnCod) btnCod.style.display = 'block';
+        } else {
+          if (btnCard) btnCard.style.display = 'block';
+          if (btnCod) btnCod.style.display = 'none';
+        }
+      });
+    });
+
+    // Direct COD confirmation
+    const codBtn = document.getElementById('btn-confirm-cod');
+    if (codBtn) {
+      codBtn.addEventListener('click', () => this.confirmDirectCodOrder());
+    }
+
     // Submit payment
     const payForm = document.getElementById('payment-form');
     if (payForm) {
@@ -304,6 +326,71 @@ window.CheckoutManager = {
     window.showToast('Données de carte de démonstration insérées ✨');
   },
 
+  async confirmDirectCodOrder() {
+    const fullName = document.getElementById('ship-name').value.trim();
+    const email = document.getElementById('ship-email').value.trim();
+    const phone = document.getElementById('ship-phone').value.trim();
+    const address = document.getElementById('ship-address').value.trim();
+    const city = document.getElementById('ship-city').value.trim();
+    const postalCode = document.getElementById('ship-zip').value.trim();
+    const country = document.getElementById('ship-country').value.trim();
+
+    if (!fullName || !email || !address || !city) {
+      alert('Veuillez remplir vos coordonnées complètes pour la livraison');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Veuillez saisir une adresse email valide');
+      return;
+    }
+
+    this.shippingData = { fullName, email, phone, address, city, postalCode, country };
+
+    const btn = document.getElementById('btn-confirm-cod');
+    const origHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="luxury-spinner"></span> <span>Transmission de votre commande...</span>';
+
+    const payload = {
+      items: window.CartManager.items,
+      customer: this.shippingData,
+      paymentMethod: 'COD',
+      promoCode: window.CartManager.promoCode,
+      shippingMethod: this.shippingMethod,
+      currency: window.CartManager.currentCurrency
+    };
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+
+        if (result.success && result.order) {
+          this.lastOrder = result.order;
+          this.showOrderConfirmation(result.order);
+          window.CartManager.clear();
+          window.showToast('✨ Félicitations ! Votre commande a été transmise à nos ateliers !');
+        } else {
+          alert(result.message || 'Une erreur est survenue lors du traitement.');
+        }
+      }, 1000);
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerHTML = origHtml;
+      console.error(err);
+      alert('Erreur réseau. Veuillez réessayer.');
+    }
+  },
+
   async processPayment() {
     const numInput = document.getElementById('card-number-input').value.replace(/\s+/g, '');
     const expInput = document.getElementById('card-exp-input').value;
@@ -333,7 +420,10 @@ window.CheckoutManager = {
     const payload = {
       items: window.CartManager.items,
       customer: this.shippingData,
+      paymentMethod: 'CARD',
+      cardNumber: numInput,
       payment: {
+        method: 'CARD',
         cardNumber: numInput,
         expiry: expInput,
         cvv: cvvInput

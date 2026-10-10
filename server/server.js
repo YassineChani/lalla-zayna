@@ -412,9 +412,38 @@ app.post('/api/checkout', checkoutLimiter, (req, res) => {
     return res.status(400).json({ success: false, message: 'Le panier est vide' });
   }
 
-  const cleanCard = (cardNumber || '').toString().replace(/\s+/g, '');
-  if (cleanCard.length < 13 || cleanCard.length > 19 || !/^\d+$/.test(cleanCard)) {
-    return res.status(400).json({ success: false, message: 'Numéro de carte bancaire invalide' });
+  const paymentMethod = (req.body.paymentMethod || req.body.payment?.method || 'CARD').toUpperCase();
+  const rawCard = req.body.cardNumber || req.body.payment?.cardNumber || '';
+  const cleanCard = rawCard.toString().replace(/\s+/g, '');
+
+  let paymentInfo = {};
+
+  if (paymentMethod === 'COD' || paymentMethod === 'DELIVERY') {
+    paymentInfo = {
+      method: 'PAIEMENT À LA LIVRAISON (COD)',
+      cardMasked: 'Paiement à Réception',
+      brand: 'Espèces / TPE Livraison',
+      status: 'À ENCAISSER'
+    };
+  } else if (paymentMethod === 'TRANSFER') {
+    paymentInfo = {
+      method: 'VIREMENT BANCAIRE PRIVÉ',
+      cardMasked: 'RIB / Virement Direct',
+      brand: 'Virement VIP',
+      status: 'EN ATTENTE DE VIREMENT'
+    };
+  } else {
+    // Card payment
+    if (cleanCard.length < 13 || cleanCard.length > 19 || !/^\d+$/.test(cleanCard)) {
+      return res.status(400).json({ success: false, message: 'Numéro de carte bancaire invalide' });
+    }
+    paymentInfo = {
+      method: 'CARTE BANCAIRE',
+      cardMasked: `•••• •••• •••• ${cleanCard.slice(-4)}`,
+      cardLast4: cleanCard.slice(-4),
+      brand: detectCardBrand(cleanCard),
+      status: 'APPROVED'
+    };
   }
 
   let subtotalEUR = 0;
@@ -429,7 +458,7 @@ app.post('/api/checkout', checkoutLimiter, (req, res) => {
       price,
       quantity: qty,
       color: sanitizeText(item.color || '', 40) || null,
-      image: prod ? prod.images[0] : null
+      image: prod ? prod.images[0] : (item.image || null)
     };
   });
 
@@ -458,11 +487,10 @@ app.post('/api/checkout', checkoutLimiter, (req, res) => {
   const orderId = `LZ-${Date.now().toString(36).toUpperCase()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
   const transactionId = `TXN-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
 
-  // SECURE REDACTION: NEVER STORE FULL CARD NUMBER OR CVV
   const orderData = {
     orderId,
     transactionId,
-    status: 'PAID_CONFIRMED',
+    status: (paymentMethod === 'COD' || paymentMethod === 'DELIVERY') ? 'NOUVELLE (À LIVRER)' : 'PAYÉE (EN PRÉPARATION)',
     createdAt: new Date().toISOString(),
     customer: {
       fullName: sanitizeText(customer.fullName, 120),
@@ -473,13 +501,7 @@ app.post('/api/checkout', checkoutLimiter, (req, res) => {
       postalCode: sanitizeText(customer.postalCode, 20),
       country: sanitizeText(customer.country, 60)
     },
-    payment: {
-      method: 'CARD',
-      cardMasked: `•••• •••• •••• ${cleanCard.slice(-4)}`,
-      cardLast4: cleanCard.slice(-4),
-      brand: detectCardBrand(cleanCard),
-      status: 'APPROVED'
-    },
+    payment: paymentInfo,
     items: verifiedItems,
     pricing: {
       subtotalEUR,

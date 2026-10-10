@@ -613,7 +613,29 @@
                 </label>
               </div>
 
-              <button type="button" class="btn-primary" id="btn-to-payment" style="width:100%; margin-top:24px" data-i18n="checkout.btnToPayment">Continuer vers le Paiement</button>
+              <!-- Payment Method Selection -->
+              <label class="form-label" style="margin-top:18px">Choix du Mode de Règlement</label>
+              <div class="shipping-options-list" style="margin-bottom:20px">
+                <label class="shipping-option-card">
+                  <input type="radio" name="checkout_payment_mode" value="card" checked id="pay-mode-card">
+                  <div>
+                    <strong style="display:block; font-size:0.85rem">💳 Paiement par Carte Bancaire (3D Secure)</strong>
+                    <span style="font-size:0.75rem; color:#777">Visa, Mastercard, Amex chiffré en direct</span>
+                  </div>
+                </label>
+                <label class="shipping-option-card">
+                  <input type="radio" name="checkout_payment_mode" value="cod" id="pay-mode-cod">
+                  <div>
+                    <strong style="display:block; font-size:0.85rem">🤝 Paiement à la Livraison / Concierge VIP</strong>
+                    <span style="font-size:0.75rem; color:#777">Réglez en toute sérénité à la réception de votre sac</span>
+                  </div>
+                </label>
+              </div>
+
+              <div id="checkout-actions-step1">
+                <button type="button" class="btn-primary" id="btn-to-payment" style="width:100%" data-i18n="checkout.btnToPayment">Continuer vers le Paiement par Carte</button>
+                <button type="button" class="btn-primary" id="btn-confirm-cod" style="width:100%; display:none; background:linear-gradient(135deg, #c59b27, #8d6f1a); box-shadow:0 4px 15px rgba(197,155,39,0.3)">✨ Confirmer Ma Commande Directe</button>
+              </div>
             </form>
           </div>
 

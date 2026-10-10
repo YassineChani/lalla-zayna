@@ -919,12 +919,12 @@
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>N° Commande</th>
-                  <th>Date</th>
-                  <th>Cliente</th>
-                  <th>Articles</th>
-                  <th>Montant</th>
-                  <th>Paiement</th>
+                  <th>N° Commande & Date</th>
+                  <th>Cliente & Contact</th>
+                  <th>Adresse Livraison</th>
+                  <th>Sacs & Articles</th>
+                  <th>Total</th>
+                  <th>Règlement</th>
                   <th>Statut</th>
                 </tr>
               </thead>
@@ -1168,6 +1168,11 @@
 
         // Settings form
         document.getElementById('settings-form').addEventListener('submit', (e) => this.handleSettingsSubmit(e));
+
+        // Auto-refresh orders live every 4 seconds
+        setInterval(() => {
+          if (this.token) this.fetchOrders(true);
+        }, 4000);
       },
 
       toast(msg, type = 'success') {
@@ -1517,16 +1522,22 @@
         }
       },
 
-      // Orders
-      async fetchOrders() {
+      // Orders with Live Auto-Refresh
+      async fetchOrders(silent = false) {
         try {
           const res = await fetch('/api/admin/orders', {
             headers: { 'Authorization': `Bearer ${this.token}` }
           });
           const data = await res.json();
           if (data.success && data.orders) {
+            const prevCount = this.orders.length;
             this.orders = data.orders;
             this.renderOrders();
+
+            if (silent && prevCount > 0 && data.orders.length > prevCount) {
+              const newOrder = data.orders[0];
+              this.toast(`🔔 NOUVELLE COMMANDE REÇUE ! (#${newOrder.orderId} - ${newOrder.customer?.fullName} - ${newOrder.pricing?.totalFormatted})`, 'success');
+            }
           }
         } catch (e) {}
       },
@@ -1546,22 +1557,58 @@
 
         body.innerHTML = this.orders.map(o => {
           const date = new Date(o.createdAt).toLocaleDateString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-          const itemsSummary = (o.items || []).map(i => `${i.quantity}x ${i.name}`).join(', ');
+          const itemsHtml = (o.items || []).map(i => `
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px">
+              ${i.image ? `<img src="${i.image}" style="width:30px; height:30px; border-radius:4px; object-fit:cover; border:1px solid var(--border-gold)" onerror="this.style.display='none'">` : ''}
+              <div style="line-height:1.2">
+                <span style="font-weight:600; color:#fff">${i.quantity}x ${i.name}</span>
+                ${i.color ? `<div style="font-size:0.7rem; color:var(--gold-primary)">(${i.color})</div>` : ''}
+              </div>
+            </div>
+          `).join('');
+
           const total = o.pricing?.totalFormatted || `${o.pricing?.totalEUR || 0} €`;
+          const rawPhone = (o.customer?.phone || '').replace(/[^\d+]/g, '');
+          const waMsg = encodeURIComponent(`Bonjour ${o.customer?.fullName || ''}, Maison Lalla Zayna a bien reçu votre commande d'exception #${o.orderId}. Nous préparons votre écrin.`);
+          const waLink = rawPhone ? `https://wa.me/${rawPhone.replace('+', '')}?text=${waMsg}` : '#';
+
+          const isCod = (o.payment?.method || '').includes('LIVRAISON') || (o.payment?.method || '').includes('COD');
 
           return `
             <tr>
-              <td><strong>${o.orderId}</strong></td>
-              <td>${date}</td>
-              <td>${o.customer?.fullName}<br><small style="color:#888">${o.customer?.city || ''}</small></td>
-              <td>${itemsSummary}</td>
-              <td><strong style="color:var(--gold-light)">${total}</strong></td>
-              <td><span style="color:#2ecc71">✓ ${o.payment?.brand || 'Carte'} (•••• ${o.payment?.cardLast4 || ''})</span></td>
               <td>
-                <select class="form-control" style="padding:4px 8px; font-size:0.75rem; width:auto" onchange="AdminApp.updateOrderStatus('${o.orderId}', this.value)">
-                  <option value="PAID_CONFIRMED" ${o.status === 'PAID_CONFIRMED' ? 'selected' : ''}>En Préparation</option>
-                  <option value="SHIPPED" ${o.status === 'SHIPPED' ? 'selected' : ''}>Expédiée</option>
-                  <option value="DELIVERED" ${o.status === 'DELIVERED' ? 'selected' : ''}>Livrée</option>
+                <strong style="color:var(--gold-light); font-size:0.95rem">${o.orderId}</strong>
+                <div style="font-size:0.72rem; color:#888; margin-top:2px">${date}</div>
+              </td>
+              <td>
+                <strong style="color:#fff">${o.customer?.fullName}</strong>
+                <div style="font-size:0.75rem; color:#aaa"><a href="mailto:${o.customer?.email}" style="color:inherit; text-decoration:underline">${o.customer?.email}</a></div>
+                <div style="margin-top:4px">
+                  ${o.customer?.phone ? `
+                    <a href="${waLink}" target="_blank" rel="noopener" style="background:#25D366; color:#fff; text-decoration:none; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:12px; display:inline-flex; align-items:center; gap:4px">
+                      💬 WhatsApp Client
+                    </a>
+                  ` : ''}
+                </div>
+              </td>
+              <td>
+                <div style="font-size:0.8rem; color:#ddd">${o.customer?.address || ''}</div>
+                <div style="font-size:0.72rem; color:#888">${o.customer?.city || ''}, ${o.customer?.country || ''}</div>
+              </td>
+              <td>${itemsHtml}</td>
+              <td><strong style="color:var(--gold-light); font-size:1.1rem; font-family:var(--font-serif)">${total}</strong></td>
+              <td>
+                ${isCod 
+                  ? '<span style="background:rgba(197,155,39,0.15); border:1px solid var(--border-gold); color:var(--gold-light); padding:4px 8px; border-radius:4px; font-size:0.72rem; font-weight:700">🤝 Paiement à Réception</span>'
+                  : `<span style="color:#2ecc71; font-size:0.75rem; font-weight:700">✓ ${o.payment?.brand || 'Carte'} (${o.payment?.cardLast4 ? '•••• ' + o.payment?.cardLast4 : 'Approuvé'})</span>`
+                }
+              </td>
+              <td>
+                <select class="form-control" style="padding:5px 8px; font-size:0.75rem; width:auto; border-color:var(--border-gold); background:#110e0a; color:#fff" onchange="AdminApp.updateOrderStatus('${o.orderId}', this.value)">
+                  <option value="NOUVELLE (À LIVRER)" ${o.status && o.status.includes('NOUVELLE') ? 'selected' : ''}>NOUVELLE</option>
+                  <option value="EN PRÉPARATION" ${(o.status && o.status.includes('PRÉPARATION')) || o.status === 'PAID_CONFIRMED' ? 'selected' : ''}>EN PRÉPARATION</option>
+                  <option value="EXPÉDIÉE" ${(o.status && o.status.includes('EXPÉDIÉE')) || o.status === 'SHIPPED' ? 'selected' : ''}>EXPÉDIÉE</option>
+                  <option value="LIVRÉE" ${(o.status && o.status.includes('LIVRÉE')) || o.status === 'DELIVERED' ? 'selected' : ''}>LIVRÉE</option>
                 </select>
               </td>
             </tr>
