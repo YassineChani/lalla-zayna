@@ -150,8 +150,7 @@ window.CartManager = {
       time: Date.now()
     }));
 
-    // ✅ DIRECT REDIRECTION TO COMMANDE PAGE
-    window.location.href = 'commande.html';
+    this.pulseBadge();
   },
 
   _getOrCreateSessionId() {
@@ -251,6 +250,12 @@ window.CartManager = {
       overlay.classList.remove('open');
       document.body.classList.remove('no-scroll');
     }
+  },
+
+  pulseBadge() {
+    document.querySelectorAll('.cart-count-badge').forEach(b => {
+      b.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.6)' }, { transform: 'scale(1)' }], { duration: 450 });
+    });
   },
 
   renderBadge() {
@@ -420,7 +425,7 @@ window.showTopNotification = function(data) {
       <!-- Action Buttons -->
       <div class="tlb-actions">
         <button type="button" class="tlb-btn-primary" id="tlb-direct-checkout-btn" style="font-size:0.88rem; font-weight:700">
-          🛍️ Commander — Entrer Email &amp; Numéro →
+          🛍️ Commander maintenant →
         </button>
         <button type="button" class="tlb-btn-secondary" id="tlb-view-cart-btn">
           Voir Panier
@@ -439,10 +444,7 @@ window.showTopNotification = function(data) {
     directBtn.addEventListener('click', (e) => {
       e.preventDefault();
       window.closeTopNotification();
-      // Open checkout modal directly (not cart drawer)
-      if (window.CheckoutManager) {
-        window.CheckoutManager.openCheckoutModal();
-      }
+      window.location.href = 'commande.html';
     });
   }
 

@@ -418,7 +418,7 @@
   </main>
 
   <script src="js/i18n.js?v=20261010_v5"></script>
-  <script src="js/cart.js?v=20261014_v1"></script>
+  <script src="js/cart.js?v=20261014_v2"></script>
   <script>
     const selectedPaymentMethod = 'COD';
 
@@ -466,16 +466,19 @@
       const items = window.CartManager.items;
       const listContainer = document.getElementById('checkout-items-list');
       
-      // Check last added info
-      const lastAddedStr = localStorage.getItem('lz_last_added');
-      if (lastAddedStr) {
-        try {
-          const lastAdded = JSON.parse(lastAddedStr);
-          document.getElementById('alert-article-title').textContent = 
-            `✨ Article sélectionné : ${lastAdded.item.name}`;
-          document.getElementById('alert-article-desc').textContent = 
-            `Finition : ${lastAdded.item.color} — Prix : ${window.CartManager.formatMoney(lastAdded.item.price)} | Vous pouvez modifier la quantité ci-dessous :`;
-        } catch(e) {}
+      // Update dynamic alert banner
+      const totalQty = items.reduce((acc, it) => acc + it.quantity, 0);
+      if (items.length > 1) {
+        document.getElementById('alert-article-title').textContent = 
+          `✨ ${items.length} modèles sélectionnés (${totalQty} articles au total)`;
+        document.getElementById('alert-article-desc').textContent = 
+          `Votre panier est prêt. Vous pouvez ajuster les quantités ou supprimer un article ci-dessous :`;
+      } else if (items.length === 1) {
+        const single = items[0];
+        document.getElementById('alert-article-title').textContent = 
+          `✨ Article sélectionné : ${single.name}`;
+        document.getElementById('alert-article-desc').textContent = 
+          `Finition : ${single.color || 'Noble'} — Prix : ${window.CartManager.formatMoney(single.price)} | Vous pouvez modifier la quantité ci-dessous :`;
       }
 
       if (items.length === 0) {
