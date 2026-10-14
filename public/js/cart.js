@@ -143,7 +143,6 @@ window.CartManager = {
     });
 
     // Store last added article info for commande.html to display
-    const activeItem = existingIndex > -1 ? this.items[existingIndex] : this.items[this.items.length - 1];
     localStorage.setItem('lz_last_added', JSON.stringify({
       articleNumber,
       item: activeItem,
