@@ -120,96 +120,26 @@ const uploadLimiter = rateLimit({
 });
 
 // ====================================================
-// 3. SECURE DATA STORAGE & PATH SANITIZATION
+// 3. DATABASE (PostgreSQL in production, JSON files locally) & SANITIZATION
 // ====================================================
 
-const uploadsDir = path.join(__dirname, '..', 'public', 'assets', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+const { getStore } = require('./store');
+const { sendOrderEmails } = require('./mailer');
 
-const productsPath = path.join(__dirname, 'data', 'products.json');
-const ordersPath = path.join(__dirname, 'data', 'orders.json');
-const conciergePath = path.join(__dirname, 'data', 'concierge.json');
-const settingsPath = path.join(__dirname, 'data', 'settings.json');
+let store = null;
 
-// In-memory data caches
-let products = [];
-try {
-  if (fs.existsSync(productsPath)) {
-    products = JSON.parse(fs.readFileSync(productsPath, 'utf8'));
+// Make sure the database is ready before any API route runs (safe for serverless cold starts)
+app.use('/api', async (req, res, next) => {
+  try {
+    store = await getStore();
+    next();
+  } catch (err) {
+    console.error('[DB] unavailable:', err.message);
+    res.status(503).json({ success: false, message: 'Service temporairement indisponible. Veuillez réessayer.' });
   }
-} catch (err) {
-  console.error('[SECURITY] Error loading products.json:', err.message);
-  products = [];
-}
-
-let savedOrders = [];
-try {
-  if (fs.existsSync(ordersPath)) {
-    savedOrders = JSON.parse(fs.readFileSync(ordersPath, 'utf8'));
-  }
-} catch (err) {
-  savedOrders = [];
-}
-
-let savedConcierge = [];
-try {
-  if (fs.existsSync(conciergePath)) {
-    savedConcierge = JSON.parse(fs.readFileSync(conciergePath, 'utf8'));
-  }
-} catch (err) {
-  savedConcierge = [];
-}
-
-let siteSettings = {
-  announcement: "✨ LIVRAISON MONDIALE EXPRESS OFFERTE DÈS 300€ — ÉCRIN CADEAU SIGNÉ INCLUS",
-  phone: "+212 6 00 00 00 00",
-  email: "contact.lalazayna@gmail.com",
-  freeShippingThresholdEUR: 300
-};
-try {
-  if (fs.existsSync(settingsPath)) {
-    siteSettings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
-  }
-} catch (err) {}
+});
 
 const newsletterSubscribers = new Set();
-
-// Persistence helpers
-function persistProducts() {
-  try {
-    fs.writeFileSync(productsPath, JSON.stringify(products, null, 2), 'utf8');
-    return true;
-  } catch (e) {
-    console.error('[SECURITY] Error writing products.json');
-    return false;
-  }
-}
-
-function persistOrders() {
-  try {
-    fs.writeFileSync(ordersPath, JSON.stringify(savedOrders, null, 2), 'utf8');
-  } catch (e) {
-    console.error('[SECURITY] Error writing orders.json');
-  }
-}
-
-function persistConcierge() {
-  try {
-    fs.writeFileSync(conciergePath, JSON.stringify(savedConcierge, null, 2), 'utf8');
-  } catch (e) {
-    console.error('[SECURITY] Error writing concierge.json');
-  }
-}
-
-function persistSettings() {
-  try {
-    fs.writeFileSync(settingsPath, JSON.stringify(siteSettings, null, 2), 'utf8');
-  } catch (e) {
-    console.error('[SECURITY] Error writing settings.json');
-  }
-}
 
 // Input sanitizer helper (Prevents XSS / Stored HTML injection)
 function sanitizeText(str, maxLength = 1000) {
@@ -262,27 +192,35 @@ function verifyPasswordSafe(inputPassword) {
   }
 }
 
-// Active session store with expiration (Token -> { email, expiresAt })
-const activeSessions = new Map();
+// Stateless signed session tokens (HMAC-SHA256).
+// Works on serverless platforms (Vercel) where memory is not shared between requests.
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
+const SESSION_SECRET = process.env.SESSION_SECRET ||
+  crypto.createHash('sha256').update(`lz-session|${ADMIN_EMAIL}|${ADMIN_PASSWORD}`).digest('hex');
+
+function signPayload(b64) {
+  return crypto.createHmac('sha256', SESSION_SECRET).update(b64).digest('base64url');
+}
 
 function createSession(email) {
-  // 256-bit cryptographically secure random token
-  const token = 'lz_sec_' + crypto.randomBytes(32).toString('hex');
-  const expiresAt = Date.now() + SESSION_TTL_MS;
-  activeSessions.set(token, { email, expiresAt });
-  return token;
+  const payload = Buffer.from(JSON.stringify({ e: email, exp: Date.now() + SESSION_TTL_MS })).toString('base64url');
+  return `lz_sec_${payload}.${signPayload(payload)}`;
 }
 
 function isValidSession(token) {
-  if (!token || typeof token !== 'string') return false;
-  const session = activeSessions.get(token);
-  if (!session) return false;
-  if (Date.now() > session.expiresAt) {
-    activeSessions.delete(token);
+  if (!token || typeof token !== 'string' || !token.startsWith('lz_sec_')) return false;
+  const [payload, sig] = token.slice(7).split('.');
+  if (!payload || !sig) return false;
+  const expected = signPayload(payload);
+  const a = Buffer.from(sig);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false;
+  try {
+    const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+    return data.e === ADMIN_EMAIL && typeof data.exp === 'number' && Date.now() < data.exp;
+  } catch (e) {
     return false;
   }
-  return true;
 }
 
 // Auth Middleware
@@ -305,7 +243,8 @@ function requireAdmin(req, res, next) {
 // ====================================================
 
 // Config
-app.get('/api/config', (req, res) => {
+app.get('/api/config', async (req, res) => {
+  const siteSettings = await store.getSettings();
   res.json({
     currencies: CURRENCY_RATES,
     languages: ['fr', 'en', 'es', 'nl'],
@@ -324,9 +263,9 @@ app.get('/api/config', (req, res) => {
 });
 
 // Products
-app.get('/api/products', (req, res) => {
+app.get('/api/products', async (req, res) => {
   const { category, search, lang = 'fr', sort } = req.query;
-  let filtered = [...products];
+  let filtered = [...(await store.listProducts())];
 
   if (category && category !== 'all') {
     filtered = filtered.filter(p => p.category === category);
@@ -358,9 +297,9 @@ app.get('/api/products', (req, res) => {
   });
 });
 
-app.get('/api/products/:id', (req, res) => {
+app.get('/api/products/:id', async (req, res) => {
   const cleanId = sanitizeText(req.params.id, 64);
-  const product = products.find(p => p.id === cleanId || p.slug === cleanId);
+  const product = (await store.listProducts()).find(p => p.id === cleanId || p.slug === cleanId);
   if (!product) {
     return res.status(404).json({ success: false, message: 'Produit introuvable' });
   }
@@ -468,7 +407,9 @@ app.get('/api/cart/session/:sessionId', (req, res) => {
 });
 
 // Checkout Simulation (PCI-DSS compliant: Card numbers never stored unmasked)
-app.post('/api/checkout', checkoutLimiter, (req, res) => {
+app.post('/api/checkout', checkoutLimiter, async (req, res) => {
+  const products = await store.listProducts();
+  const siteSettings = await store.getSettings();
 
   const {
     customer,
@@ -594,9 +535,9 @@ app.post('/api/checkout', checkoutLimiter, (req, res) => {
     }
   };
 
-  savedOrders.unshift(orderData);
-  if (savedOrders.length > 500) savedOrders.pop(); // bound memory
-  persistOrders();
+  await store.insertOrder(orderData);
+  // Emails (never throws; skipped if SMTP not configured)
+  await sendOrderEmails(orderData, siteSettings.email);
 
   res.json({
     success: true,
@@ -619,9 +560,9 @@ function formatCurrency(amountEUR, currencyCode) {
 }
 
 // Order Status
-app.get('/api/orders/:orderId', (req, res) => {
+app.get('/api/orders/:orderId', async (req, res) => {
   const cleanId = sanitizeText(req.params.orderId, 64);
-  const order = savedOrders.find(o => o.orderId === cleanId);
+  const order = await store.getOrder(cleanId);
   if (!order) {
     return res.status(404).json({ success: false, message: 'Commande introuvable' });
   }
@@ -643,7 +584,7 @@ app.post('/api/newsletter', (req, res) => {
 });
 
 // Concierge VIP inquiry
-app.post('/api/concierge', conciergeLimiter, (req, res) => {
+app.post('/api/concierge', conciergeLimiter, async (req, res) => {
   const { name, email, bagModel, message } = req.body;
   if (!name || !email) {
     return res.status(400).json({ success: false, message: 'Informations requises manquantes' });
@@ -659,9 +600,7 @@ app.post('/api/concierge', conciergeLimiter, (req, res) => {
     status: 'NOUVEAU'
   };
 
-  savedConcierge.unshift(entry);
-  if (savedConcierge.length > 300) savedConcierge.pop();
-  persistConcierge();
+  await store.insertConcierge(entry);
 
   res.json({
     success: true,
@@ -717,14 +656,12 @@ app.get('/api/admin/verify', requireAdmin, (req, res) => {
 
 // Admin Logout
 app.post('/api/admin/logout', requireAdmin, (req, res) => {
-  const authHeader = req.headers.authorization || '';
-  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
-  activeSessions.delete(token);
+  // Stateless signed tokens: the client discards the token (expires after 12h)
   res.json({ success: true, message: 'Session révoquée avec succès.' });
 });
 
 // File Upload Hardening: Magic Bytes inspection & Path Traversal Prevention
-app.post('/api/admin/upload', requireAdmin, uploadLimiter, (req, res) => {
+app.post('/api/admin/upload', requireAdmin, uploadLimiter, async (req, res) => {
   const { dataUrl } = req.body;
   if (!dataUrl || typeof dataUrl !== 'string') {
     return res.status(400).json({ success: false, message: 'Données image manquantes' });
@@ -771,16 +708,8 @@ app.post('/api/admin/upload', requireAdmin, uploadLimiter, (req, res) => {
 
     // Cryptographically random unique filename (completely ignores user-supplied name to prevent directory traversal)
     const secureFilename = `bag_${Date.now()}_${crypto.randomBytes(6).toString('hex')}.${ext}`;
-    const destinationPath = path.resolve(uploadsDir, secureFilename);
-
-    // Ensure path cannot escape uploadsDir
-    if (!destinationPath.startsWith(uploadsDir)) {
-      return res.status(400).json({ success: false, message: 'Chemin de destination invalide.' });
-    }
-
-    fs.writeFileSync(destinationPath, buffer);
-
-    const publicUrl = `/assets/uploads/${secureFilename}`;
+    const mime = ext === 'jpg' ? 'image/jpeg' : `image/${ext}`;
+    const publicUrl = await store.saveUpload(secureFilename, mime, buffer);
     res.json({
       success: true,
       message: 'Photo téléversée en toute sécurité !',
@@ -792,12 +721,27 @@ app.post('/api/admin/upload', requireAdmin, uploadLimiter, (req, res) => {
   }
 });
 
+// Public image serving (DB-stored uploads)
+app.get('/api/uploads/:name', async (req, res) => {
+  const name = String(req.params.name || '');
+  if (!/^[A-Za-z0-9_.-]{1,100}$/.test(name)) return res.status(400).end();
+  const up = await store.getUpload(name);
+  if (!up) return res.status(404).end();
+  res.set({
+    'Content-Type': up.mime,
+    'Cache-Control': 'public, max-age=31536000, immutable',
+    'X-Content-Type-Options': 'nosniff'
+  });
+  res.send(up.buffer);
+});
+
 // Admin Products CRUD
-app.get('/api/admin/products', requireAdmin, (req, res) => {
+app.get('/api/admin/products', requireAdmin, async (req, res) => {
+  const products = await store.listProducts();
   res.json({ success: true, count: products.length, products });
 });
 
-app.post('/api/admin/products', requireAdmin, (req, res) => {
+app.post('/api/admin/products', requireAdmin, async (req, res) => {
   const {
     name,
     subtitle,
@@ -927,8 +871,7 @@ app.post('/api/admin/products', requireAdmin, (req, res) => {
     }
   };
 
-  products.unshift(newProduct);
-  persistProducts();
+  await store.insertProduct(newProduct);
 
   res.json({
     success: true,
@@ -937,14 +880,13 @@ app.post('/api/admin/products', requireAdmin, (req, res) => {
   });
 });
 
-app.put('/api/admin/products/:id', requireAdmin, (req, res) => {
+app.put('/api/admin/products/:id', requireAdmin, async (req, res) => {
   const cleanId = sanitizeText(req.params.id, 64);
-  const idx = products.findIndex(p => p.id === cleanId);
-  if (idx === -1) {
+  const existing = (await store.listProducts()).find(p => p.id === cleanId);
+  if (!existing) {
     return res.status(404).json({ success: false, message: 'Produit introuvable' });
   }
 
-  const existing = products[idx];
   const {
     name,
     subtitle,
@@ -984,8 +926,7 @@ app.put('/api/admin/products/:id', requireAdmin, (req, res) => {
     if (dimensions) existing.translations[lang].dimensions = sanitizeText(dimensions, 60);
   });
 
-  products[idx] = existing;
-  persistProducts();
+  await store.updateProduct(existing);
 
   res.json({
     success: true,
@@ -994,16 +935,12 @@ app.put('/api/admin/products/:id', requireAdmin, (req, res) => {
   });
 });
 
-app.delete('/api/admin/products/:id', requireAdmin, (req, res) => {
+app.delete('/api/admin/products/:id', requireAdmin, async (req, res) => {
   const cleanId = sanitizeText(req.params.id, 64);
-  const initialLength = products.length;
-  products = products.filter(p => p.id !== cleanId);
-
-  if (products.length === initialLength) {
+  const removed = await store.deleteProduct(cleanId);
+  if (!removed) {
     return res.status(404).json({ success: false, message: 'Produit introuvable' });
   }
-
-  persistProducts();
   res.json({
     success: true,
     message: 'Le sac a été retiré du catalogue officiel avec succès.'
@@ -1011,24 +948,26 @@ app.delete('/api/admin/products/:id', requireAdmin, (req, res) => {
 });
 
 // Orders & Concierge
-app.get('/api/admin/orders', requireAdmin, (req, res) => {
+app.get('/api/admin/orders', requireAdmin, async (req, res) => {
+  const savedOrders = await store.listOrders();
   res.json({ success: true, count: savedOrders.length, orders: savedOrders });
 });
 
-app.patch('/api/admin/orders/:orderId', requireAdmin, (req, res) => {
+app.patch('/api/admin/orders/:orderId', requireAdmin, async (req, res) => {
   const cleanId = sanitizeText(req.params.orderId, 64);
   const { status } = req.body;
-  const order = savedOrders.find(o => o.orderId === cleanId);
+  const order = await store.getOrder(cleanId);
   if (!order) {
     return res.status(404).json({ success: false, message: 'Commande introuvable' });
   }
   const cleanStatus = sanitizeText(status, 40);
   order.status = cleanStatus || order.status;
-  persistOrders();
+  await store.updateOrder(order);
   res.json({ success: true, message: 'Statut de la commande mis à jour.', order });
 });
 
-app.get('/api/admin/concierge', requireAdmin, (req, res) => {
+app.get('/api/admin/concierge', requireAdmin, async (req, res) => {
+  const savedConcierge = await store.listConcierge();
   res.json({ success: true, count: savedConcierge.length, requests: savedConcierge });
 });
 
@@ -1060,11 +999,12 @@ app.delete('/api/admin/promos/:code', requireAdmin, (req, res) => {
 });
 
 // Settings
-app.get('/api/admin/settings', requireAdmin, (req, res) => {
-  res.json({ success: true, settings: siteSettings });
+app.get('/api/admin/settings', requireAdmin, async (req, res) => {
+  res.json({ success: true, settings: await store.getSettings() });
 });
 
-app.post('/api/admin/settings', requireAdmin, (req, res) => {
+app.post('/api/admin/settings', requireAdmin, async (req, res) => {
+  const siteSettings = await store.getSettings();
   const { announcement, phone, email, freeShippingThresholdEUR } = req.body;
   if (announcement !== undefined) siteSettings.announcement = sanitizeText(announcement, 200);
   if (phone !== undefined) siteSettings.phone = sanitizeText(phone, 40);
@@ -1073,7 +1013,7 @@ app.post('/api/admin/settings', requireAdmin, (req, res) => {
     const thresh = parseFloat(freeShippingThresholdEUR);
     siteSettings.freeShippingThresholdEUR = !isNaN(thresh) && thresh >= 0 ? thresh : 300;
   }
-  persistSettings();
+  await store.saveSettings(siteSettings);
   res.json({ success: true, message: 'Paramètres enregistrés en toute sécurité.', settings: siteSettings });
 });
 
