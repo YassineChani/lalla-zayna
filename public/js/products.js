@@ -85,6 +85,20 @@ window.ProductsManager = {
     const modalOverlay = document.getElementById('quickview-overlay');
     if (modalClose) modalClose.addEventListener('click', () => this.closeQuickView());
     if (modalOverlay) modalOverlay.addEventListener('click', () => this.closeQuickView());
+
+    // Delegated click listener for Add to Cart
+    document.addEventListener('click', (e) => {
+      const addBtn = e.target.closest('.btn-add-bag');
+      if (addBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const prodId = addBtn.getAttribute('data-product-id') || addBtn.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+        if (prodId) {
+          console.log('[ProductsManager] Add to bag clicked for product:', prodId);
+          this.quickAddToCart(prodId);
+        }
+      }
+    });
   },
 
   getFilteredProducts() {
@@ -182,7 +196,7 @@ window.ProductsManager = {
 
             <div class="product-footer">
               <div class="product-price">${formattedPrice}</div>
-              <button class="btn-add-bag" onclick="ProductsManager.quickAddToCart('${product.id}')">
+              <button class="btn-add-bag" data-product-id="${product.id}" onclick="ProductsManager.quickAddToCart('${product.id}')">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 <span>${window.I18N.get('catalog.addToCart')}</span>
               </button>
