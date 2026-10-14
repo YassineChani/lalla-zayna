@@ -262,31 +262,15 @@
             <input type="text" id="cust-address" class="form-control" style="background:#fff; color:#111; border:1px solid #c59b27; padding: 12px; font-size: 0.95rem; width:100%; border-radius:6px;" required placeholder="Ex: Quartier Racine, Boulevard Al Massira, N° 25">
           </div>
 
-          <!-- PAYMENT METHODS -->
-          <label style="font-weight: 700; color: #111; margin-bottom: 10px; display: block;">
-            Choix du Mode de Règlement
-          </label>
-
-          <div class="payment-option-box selected" id="opt-cod" onclick="selectPayment('COD')">
-            <input type="radio" name="pay_choice" value="COD" checked id="radio-cod">
+          <!-- PAYMENT METHOD (CASH ON DELIVERY) -->
+          <div style="background: rgba(197, 155, 39, 0.08); border: 1.5px solid var(--color-gold); border-radius: 8px; padding: 16px; margin-bottom: 22px; display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 1.8rem;">🤝</span>
             <div>
-              <strong style="color: var(--color-gold-dark); font-size: 0.92rem; display: block;">
-                🤝 Paiement à la Livraison (Cash on Delivery) — Recommandé
+              <strong style="color: var(--color-gold-dark); font-size: 0.96rem; display: block;">
+                Paiement à la Livraison (Cash on Delivery)
               </strong>
-              <span style="font-size: 0.78rem; color: #666;">
-                Réglez en espèces ou par carte lors de la réception de votre sac à votre porte
-              </span>
-            </div>
-          </div>
-
-          <div class="payment-option-box" id="opt-card" onclick="selectPayment('CARD')">
-            <input type="radio" name="pay_choice" value="CARD" id="radio-card">
-            <div>
-              <strong style="color: #222; font-size: 0.92rem; display: block;">
-                💳 Paiement par Carte Bancaire (Visa, Mastercard, CMI)
-              </strong>
-              <span style="font-size: 0.78rem; color: #666;">
-                Paiement chiffré SSL 256 bits instantané
+              <span style="font-size: 0.8rem; color: #555; display: block; margin-top: 2px;">
+                Réglez en espèces ou par carte bancaire lors de la réception de votre sac à votre porte.
               </span>
             </div>
           </div>
@@ -398,22 +382,26 @@
   </main>
 
   <script src="js/i18n.js?v=20261010_v5"></script>
-  <script src="js/cart.js?v=20261010_v5"></script>
+  <script src="js/cart.js?v=20261014_v1"></script>
   <script>
-    let selectedPaymentMethod = 'COD';
+    const selectedPaymentMethod = 'COD';
 
-    function selectPayment(mode) {
-      selectedPaymentMethod = mode;
-      document.querySelectorAll('.payment-option-box').forEach(el => el.classList.remove('selected'));
-      if (mode === 'COD') {
-        document.getElementById('opt-cod').classList.add('selected');
-        document.getElementById('radio-cod').checked = true;
-        document.getElementById('btn-submit-order').textContent = '✨ CONFIRMER MA COMMANDE (PAIEMENT À LA LIVRAISON)';
-      } else {
-        document.getElementById('opt-card').classList.add('selected');
-        document.getElementById('radio-card').checked = true;
-        document.getElementById('btn-submit-order').textContent = '💳 RÉGLER PAR CARTE BANCAIRE SÉCURISÉE';
+    // Quantity update and deletion handlers
+    function updateItemQuantity(idx, delta) {
+      if (!window.CartManager.items[idx]) return;
+      window.CartManager.items[idx].quantity += delta;
+      if (window.CartManager.items[idx].quantity <= 0) {
+        window.CartManager.items.splice(idx, 1);
       }
+      window.CartManager.save();
+      renderCommandePage();
+    }
+
+    function deleteItem(idx) {
+      if (!window.CartManager.items[idx]) return;
+      window.CartManager.items.splice(idx, 1);
+      window.CartManager.save();
+      renderCommandePage();
     }
 
     // Initialize page
@@ -448,31 +436,67 @@
         try {
           const lastAdded = JSON.parse(lastAddedStr);
           document.getElementById('alert-article-title').textContent = 
-            `✨ Article ${lastAdded.articleNumber} sélectionné : ${lastAdded.item.name}`;
+            `✨ Article sélectionné : ${lastAdded.item.name}`;
           document.getElementById('alert-article-desc').textContent = 
-            `Finition : ${lastAdded.item.color} — Prix : ${window.CartManager.formatMoney(lastAdded.item.price)} | Complétez vos informations ci-dessous :`;
+            `Finition : ${lastAdded.item.color} — Prix : ${window.CartManager.formatMoney(lastAdded.item.price)} | Vous pouvez modifier la quantité ci-dessous :`;
         } catch(e) {}
       }
 
       if (items.length === 0) {
-        listContainer.innerHTML = '<p style="color:#aaa; text-align:center; padding:20px 0;">Votre panier est actuellement vide.</p>';
+        listContainer.innerHTML = `
+          <div style="text-align:center; padding:30px 10px; color:#aaa;">
+            <p style="margin-bottom:12px;">Votre panier est actuellement vide.</p>
+            <a href="index.html#collection" style="color:var(--color-gold); font-size:0.85rem; text-decoration:underline;">
+              ← Découvrir les sacs de la collection
+            </a>
+          </div>
+        `;
         document.getElementById('summary-subtotal').textContent = '0 €';
         document.getElementById('summary-total').textContent = '0 €';
+        const submitBtn = document.getElementById('btn-submit-order');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = '0.5';
+          submitBtn.style.cursor = 'not-allowed';
+        }
         return;
       }
 
-      listContainer.innerHTML = items.map(item => `
-        <div class="summary-item-row">
-          <img src="${item.image}" alt="${item.name}" class="summary-item-img">
+      const submitBtn = document.getElementById('btn-submit-order');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+      }
+
+      listContainer.innerHTML = items.map((item, idx) => `
+        <div class="summary-item-row" style="display:flex; align-items:center; gap:12px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+          <img src="${item.image}" alt="${item.name}" class="summary-item-img" style="width:58px; height:58px; object-fit:cover; border-radius:6px; border:1px solid var(--color-gold);">
           <div style="flex:1;">
-            <strong style="color:#fff; font-size:0.92rem; display:block;">${item.name}</strong>
-            <span style="color:#aaa; font-size:0.78rem;">${item.color} · Qté: ${item.quantity}</span>
+            <strong style="color:#fff; font-size:0.92rem; display:block; line-height:1.2;">${item.name}</strong>
+            <span style="color:#aaa; font-size:0.75rem; display:block; margin:2px 0 6px 0;">${item.color}</span>
+            <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.08); padding:3px 8px; border-radius:4px; border:1px solid rgba(197,155,39,0.3);">
+              <button type="button" onclick="updateItemQuantity(${idx}, -1)" title="Diminuer" style="background:none; border:none; color:#fff; font-size:1.1rem; cursor:pointer; width:22px; height:22px; line-height:1; padding:0; display:flex; align-items:center; justify-content:center;">−</button>
+              <span style="font-weight:700; color:#f7e096; font-size:0.85rem; min-width:20px; text-align:center;">${item.quantity}</span>
+              <button type="button" onclick="updateItemQuantity(${idx}, 1)" title="Augmenter" style="background:none; border:none; color:#fff; font-size:1.1rem; cursor:pointer; width:22px; height:22px; line-height:1; padding:0; display:flex; align-items:center; justify-content:center;">+</button>
+            </div>
           </div>
-          <span style="color:var(--color-gold); font-weight:600; font-size:0.95rem;">
-            ${window.CartManager.formatMoney(item.price * item.quantity)}
-          </span>
+          <div style="text-align:right;">
+            <div style="color:var(--color-gold); font-weight:700; font-size:1rem;">
+              ${window.CartManager.formatMoney(item.price * item.quantity)}
+            </div>
+            <button type="button" onclick="deleteItem(${idx})" title="Supprimer cet article" style="background:none; border:none; color:#e57373; font-size:0.75rem; cursor:pointer; margin-top:6px; text-decoration:underline;">
+              Supprimer
+            </button>
+          </div>
         </div>
-      `).join('');
+      `).join('') + `
+        <div style="margin-top:14px; text-align:right;">
+          <a href="index.html#collection" style="color:var(--color-gold); font-size:0.8rem; text-decoration:none; font-weight:600;">
+            + Ajouter un autre sac depuis la collection →
+          </a>
+        </div>
+      `;
 
       const subtotal = window.CartManager.getSubtotalEUR();
       document.getElementById('summary-subtotal').textContent = window.CartManager.formatMoney(subtotal);
