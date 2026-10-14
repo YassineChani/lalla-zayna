@@ -240,8 +240,8 @@ const PROMO_CODES = {
 // 4. CRYPTOGRAPHIC AUTHENTICATION & SESSION MANAGEMENT
 // ====================================================
 
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@lallazayna.com').trim().toLowerCase();
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin2026';
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'laallazaayna@gmail.com').trim().toLowerCase();
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'LallaZaynaAbdo123';
 
 // Pre-compute salted hash for constant-time password verification
 const PASSWORD_SALT = crypto.randomBytes(16).toString('hex');
@@ -249,7 +249,6 @@ function hashPassword(pwd, salt) {
   return crypto.scryptSync(pwd, salt, 64).toString('hex');
 }
 const EXPECTED_HASH = hashPassword(ADMIN_PASSWORD, PASSWORD_SALT);
-const ROYAL_HASH = hashPassword('LallaZayna@2026!Royal', PASSWORD_SALT);
 
 // Constant-time password verification to prevent side-channel timing attacks
 function verifyPasswordSafe(inputPassword) {
@@ -257,10 +256,7 @@ function verifyPasswordSafe(inputPassword) {
     const inputHash = hashPassword(inputPassword, PASSWORD_SALT);
     const bufA = Buffer.from(inputHash, 'utf8');
     const bufB = Buffer.from(EXPECTED_HASH, 'utf8');
-    const bufC = Buffer.from(ROYAL_HASH, 'utf8');
-    const matchA = bufA.length === bufB.length && crypto.timingSafeEqual(bufA, bufB);
-    const matchB = bufA.length === bufC.length && crypto.timingSafeEqual(bufA, bufC);
-    return matchA || matchB;
+    return bufA.length === bufB.length && crypto.timingSafeEqual(bufA, bufB);
   } catch (e) {
     return false;
   }
@@ -1100,7 +1096,7 @@ if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
     console.log(`  Protection: Helmet, Rate-Limiter, Scrypt, Magic-Bytes`);
     console.log(`  Boutique URL: http://localhost:${PORT}`);
     console.log(`  Portail Admin: http://localhost:${PORT}/admin.html`);
-    console.log(`  Identifiants Admin: admin@lallazayna.com / admin2026`);
+    console.log(`  Admin: connexion par email + mot de passe sécurisé`);
     console.log(`=======================================================`);
   });
 }
