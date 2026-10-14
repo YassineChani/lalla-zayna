@@ -89,7 +89,8 @@ app.use('/api/', apiLimiter);
 // Strict limiter for admin login (prevents brute-force credential cracking)
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per window
+  max: 30, // 30 attempts per window
+  skipSuccessfulRequests: true, // Legitimate logins do not exhaust quota
   standardHeaders: true,
   legacyHeaders: false,
   message: {
